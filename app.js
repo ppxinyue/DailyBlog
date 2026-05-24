@@ -140,15 +140,18 @@ const readingLessons = [
 ];
 
 const $ = (selector) => document.querySelector(selector);
-const todayIndex = Math.floor(Date.now() / 86400000);
-const englishLesson = englishLessons[todayIndex % englishLessons.length];
-const readingLesson = readingLessons[todayIndex % readingLessons.length];
+const today = startOfDay(new Date());
+const contentEpoch = new Date(2026, 0, 1);
 
 const sourceVideo = $("#sourceVideo");
 const cameraVideo = $("#cameraVideo");
 const canvas = $("#compositeCanvas");
 const ctx = canvas.getContext("2d");
 
+let selectedDate = today;
+let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+let englishLesson = getLessonForDate(englishLessons, selectedDate);
+let readingLesson = getLessonForDate(readingLessons, selectedDate);
 let activeSubtitle = 0;
 let studioType = "video";
 let cameraStream = null;
@@ -160,12 +163,72 @@ let db = null;
 
 async function init() {
   bindTabs();
+  bindCalendar();
+  renderCalendar();
   renderEnglishLesson();
   renderReadingLesson();
   bindStudio();
   db = await openRecordingsDb();
   recordings = await loadRecordings();
   renderRecordings();
+}
+
+function bindCalendar() {
+  $("#prevMonth").addEventListener("click", () => {
+    calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
+    renderCalendar();
+  });
+  $("#nextMonth").addEventListener("click", () => {
+    calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+    renderCalendar();
+  });
+}
+
+function renderCalendar() {
+  $("#calendarTitle").textContent = calendarMonth.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "long",
+  });
+
+  const firstDay = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+  const gridStart = new Date(firstDay);
+  const mondayOffset = (firstDay.getDay() + 6) % 7;
+  gridStart.setDate(firstDay.getDate() - mondayOffset);
+
+  const days = Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(gridStart);
+    date.setDate(gridStart.getDate() + index);
+    return date;
+  });
+
+  $("#calendarGrid").innerHTML = days
+    .map((date) => {
+      const isCurrentMonth = date.getMonth() === calendarMonth.getMonth();
+      const isSelected = isSameDate(date, selectedDate);
+      const isToday = isSameDate(date, today);
+      const classes = ["calendar-day"];
+      if (!isCurrentMonth) classes.push("muted");
+      if (isSelected) classes.push("selected");
+      if (isToday) classes.push("today");
+      return `<button class="${classes.join(" ")}" data-date="${toDateKey(date)}">${date.getDate()}</button>`;
+    })
+    .join("");
+
+  document.querySelectorAll(".calendar-day").forEach((button) => {
+    button.addEventListener("click", () => selectDate(fromDateKey(button.dataset.date)));
+  });
+}
+
+function selectDate(date) {
+  selectedDate = startOfDay(date);
+  calendarMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+  englishLesson = getLessonForDate(englishLessons, selectedDate);
+  readingLesson = getLessonForDate(readingLessons, selectedDate);
+  sourceVideo.pause();
+  activeSubtitle = 0;
+  renderCalendar();
+  renderEnglishLesson();
+  renderReadingLesson();
 }
 
 function bindTabs() {
@@ -180,10 +243,11 @@ function bindTabs() {
 }
 
 function renderEnglishLesson() {
-  $("#englishDate").textContent = englishLesson.date;
+  $("#englishDate").textContent = `${formatDisplayDate(selectedDate)} · ${englishLesson.date}`;
   $("#englishTitle").textContent = englishLesson.title;
   $("#englishSource").textContent = englishLesson.source;
   sourceVideo.src = englishLesson.videoUrl;
+  activeSubtitle = 0;
 
   $("#subtitleList").innerHTML = englishLesson.subtitles
     .map(
@@ -215,12 +279,12 @@ function renderEnglishLesson() {
     });
   });
 
-  $("#replayLine").addEventListener("click", playActiveLine);
-  sourceVideo.addEventListener("timeupdate", syncSubtitle);
+  $("#replayLine").onclick = playActiveLine;
+  sourceVideo.ontimeupdate = syncSubtitle;
 }
 
 function renderReadingLesson() {
-  $("#readingDate").textContent = readingLesson.date;
+  $("#readingDate").textContent = `${formatDisplayDate(selectedDate)} · ${readingLesson.date}`;
   $("#readingTitle").textContent = readingLesson.title;
   $("#readingText").innerHTML = readingLesson.paragraphs
     .map((paragraph) => `<p>${paragraph}</p>`)
@@ -583,6 +647,39 @@ function drawReadingOverlay() {
   ctx.font = "700 46px serif";
   ctx.textAlign = "left";
   wrapCanvasText(text, 110, canvas.height - 430, canvas.width - 220, 62, 5);
+}
+
+function getLessonForDate(lessons, date) {
+  const dayIndex = Math.floor((startOfDay(date) - contentEpoch) / 86400000);
+  return lessons[((dayIndex % lessons.length) + lessons.length) % lessons.length];
+}
+
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function isSameDate(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function toDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function fromDateKey(value) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDisplayDate(date) {
+  return date.toLocaleDateString("zh-CN", {
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  });
 }
 
 function wrapCanvasText(text, x, y, maxWidth, lineHeight, maxLines = 2) {

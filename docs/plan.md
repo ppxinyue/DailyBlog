@@ -17,3 +17,4 @@
 6. Add a Chinese reading section with daily text and camera recording.
 7. Keep recordings locally with IndexedDB.
 8. Verify the site through a local HTTP server and browser checks.
+9. Add a calendar so users can browse practice content by date.

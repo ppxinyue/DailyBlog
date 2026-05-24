@@ -19,6 +19,27 @@
     </header>
 
     <main>
+      <section class="calendar-panel" aria-label="练习日历">
+        <div class="calendar-head">
+          <button id="prevMonth" class="icon-button light" aria-label="上个月">‹</button>
+          <div>
+            <p class="eyebrow">Practice calendar</p>
+            <h2 id="calendarTitle"></h2>
+          </div>
+          <button id="nextMonth" class="icon-button light" aria-label="下个月">›</button>
+        </div>
+        <div class="weekday-row" aria-hidden="true">
+          <span>一</span>
+          <span>二</span>
+          <span>三</span>
+          <span>四</span>
+          <span>五</span>
+          <span>六</span>
+          <span>日</span>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </section>
+
       <section id="english" class="panel active">
         <div class="practice-grid">
           <section class="video-column" aria-label="每日英语视频">
