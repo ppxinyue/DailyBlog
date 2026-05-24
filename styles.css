@@ -123,16 +123,9 @@ main {
 }
 
 .practice-grid,
-.reading-layout {
-  display: grid;
-  gap: 18px;
-  grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
-}
-
 .video-column,
 .study-column,
 .reading-main,
-.reading-notes,
 .library {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -142,7 +135,6 @@ main {
 
 .video-column,
 .reading-main,
-.reading-notes,
 .library {
   padding: 18px;
 }
@@ -275,11 +267,6 @@ main {
 
 .reading-text p + p {
   margin-top: 16px;
-}
-
-.reading-notes p {
-  color: var(--muted);
-  line-height: 1.75;
 }
 
 .library {
@@ -441,10 +428,6 @@ main {
   }
 
   .practice-grid,
-  .reading-layout {
-    grid-template-columns: 1fr;
-  }
-
   .recording-item {
     grid-template-columns: 1fr;
   }

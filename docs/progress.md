@@ -13,3 +13,7 @@
 - Verified page load, tab switching, studio opening, and JavaScript syntax.
 - Initialized Git repository after discovering the workspace was not a Git repo.
 - Created `docs/plan.md`, `docs/progress.md`, and `docs/issues.md` to track plan, progress, and issues.
+- Removed the Chinese reading "今日提示" panel.
+- Changed the Chinese reading content to full-article style entries, including the full `匆匆` text and a complete original short letter.
+- Updated studio close behavior so camera and microphone tracks stop automatically when the user exits.
+- Changed camera rendering to preserve the camera aspect ratio with letterboxing instead of stretching the person to fill the frame.
