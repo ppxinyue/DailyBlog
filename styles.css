@@ -438,6 +438,10 @@ main {
   color: white;
 }
 
+.calendar-day.available {
+  box-shadow: inset 0 0 0 2px rgba(23, 107, 135, 0.18);
+}
+
 .calendar-day.selected::after {
   background: white;
 }

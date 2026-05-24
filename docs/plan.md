@@ -18,3 +18,6 @@
 7. Keep recordings locally with IndexedDB.
 8. Verify the site through a local HTTP server and browser checks.
 9. Add a calendar so users can browse practice content by date.
+10. Replace cyclic demo content with a persistent monthly resource manifest.
+11. Validate monthly manifests for missing references and duplicate resources.
+12. Use the final three days of each month as the window for preparing the next month's manifest.

@@ -21,3 +21,9 @@
 - Added previous/next month navigation and date selection.
 - Changed lesson selection to use the selected calendar date instead of only the current day.
 - Verified date selection updates the displayed English lesson and date label.
+- Added `data/content-library.json` as the persistent resource manifest.
+- Added `docs/resource-library.md` with the professional ingestion, review, dedupe, and monthly release strategy.
+- Added `scripts/check-content-library.mjs` to validate resource references, monthly duplicate IDs, and next-month presence during the final three days.
+- Changed the front-end to load lessons from the resource manifest instead of silently cycling arrays.
+- Changed missing dates to show explicit pending states and disable video recording instead of repeating previous resources.
+- Verified the manifest-backed UI and pending-date UI in the browser.

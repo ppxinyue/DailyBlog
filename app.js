@@ -141,7 +141,6 @@ const readingLessons = [
 
 const $ = (selector) => document.querySelector(selector);
 const today = startOfDay(new Date());
-const contentEpoch = new Date(2026, 0, 1);
 
 const sourceVideo = $("#sourceVideo");
 const cameraVideo = $("#cameraVideo");
@@ -150,8 +149,9 @@ const ctx = canvas.getContext("2d");
 
 let selectedDate = today;
 let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-let englishLesson = getLessonForDate(englishLessons, selectedDate);
-let readingLesson = getLessonForDate(readingLessons, selectedDate);
+let contentLibrary = null;
+let englishLesson = createMissingEnglishLesson(selectedDate);
+let readingLesson = createMissingReadingLesson(selectedDate);
 let activeSubtitle = 0;
 let studioType = "video";
 let cameraStream = null;
@@ -162,6 +162,8 @@ let recordings = [];
 let db = null;
 
 async function init() {
+  contentLibrary = await loadContentLibrary();
+  setLessonsForDate(selectedDate);
   bindTabs();
   bindCalendar();
   renderCalendar();
@@ -206,10 +208,12 @@ function renderCalendar() {
       const isCurrentMonth = date.getMonth() === calendarMonth.getMonth();
       const isSelected = isSameDate(date, selectedDate);
       const isToday = isSameDate(date, today);
+      const isAvailable = Boolean(getDayAssignment(date));
       const classes = ["calendar-day"];
       if (!isCurrentMonth) classes.push("muted");
       if (isSelected) classes.push("selected");
       if (isToday) classes.push("today");
+      if (isAvailable) classes.push("available");
       return `<button class="${classes.join(" ")}" data-date="${toDateKey(date)}">${date.getDate()}</button>`;
     })
     .join("");
@@ -222,8 +226,7 @@ function renderCalendar() {
 function selectDate(date) {
   selectedDate = startOfDay(date);
   calendarMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-  englishLesson = getLessonForDate(englishLessons, selectedDate);
-  readingLesson = getLessonForDate(readingLessons, selectedDate);
+  setLessonsForDate(selectedDate);
   sourceVideo.pause();
   activeSubtitle = 0;
   renderCalendar();
@@ -246,7 +249,15 @@ function renderEnglishLesson() {
   $("#englishDate").textContent = `${formatDisplayDate(selectedDate)} · ${englishLesson.date}`;
   $("#englishTitle").textContent = englishLesson.title;
   $("#englishSource").textContent = englishLesson.source;
-  sourceVideo.src = englishLesson.videoUrl;
+  $("#openVideoStudio").disabled = Boolean(englishLesson.missing);
+  if (englishLesson.videoUrl) {
+    sourceVideo.src = englishLesson.videoUrl;
+    sourceVideo.controls = true;
+  } else {
+    sourceVideo.removeAttribute("src");
+    sourceVideo.controls = false;
+    sourceVideo.load();
+  }
   activeSubtitle = 0;
 
   $("#subtitleList").innerHTML = englishLesson.subtitles
@@ -309,6 +320,7 @@ function setActiveSubtitle(index) {
 
 function playActiveLine() {
   const line = englishLesson.subtitles[activeSubtitle];
+  if (!line || englishLesson.missing) return;
   sourceVideo.currentTime = line.start;
   sourceVideo.play();
   const stopAtLineEnd = () => {
@@ -331,6 +343,7 @@ function bindStudio() {
 }
 
 function openStudio(type) {
+  if (type === "video" && englishLesson.missing) return;
   studioType = type;
   $("#studio").classList.add("open");
   $("#studio").setAttribute("aria-hidden", "false");
@@ -649,9 +662,124 @@ function drawReadingOverlay() {
   wrapCanvasText(text, 110, canvas.height - 430, canvas.width - 220, 62, 5);
 }
 
-function getLessonForDate(lessons, date) {
-  const dayIndex = Math.floor((startOfDay(date) - contentEpoch) / 86400000);
-  return lessons[((dayIndex % lessons.length) + lessons.length) % lessons.length];
+async function loadContentLibrary() {
+  try {
+    const response = await fetch("./data/content-library.json", { cache: "no-cache" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    return buildFallbackContentLibrary();
+  }
+}
+
+function setLessonsForDate(date) {
+  englishLesson = getEnglishLessonForDate(date);
+  readingLesson = getReadingLessonForDate(date);
+}
+
+function getEnglishLessonForDate(date) {
+  const assignment = getDayAssignment(date);
+  const resource = assignment ? contentLibrary?.englishResources?.[assignment.english] : null;
+  if (!resource) return createMissingEnglishLesson(date);
+  return {
+    id: assignment.english,
+    title: resource.title,
+    date: resource.label,
+    source: `${resource.source} · ${resource.license}`,
+    videoUrl: resource.mediaUrl,
+    subtitles: resource.subtitles || [],
+    words: resource.words || [],
+  };
+}
+
+function getReadingLessonForDate(date) {
+  const assignment = getDayAssignment(date);
+  const resource = assignment ? contentLibrary?.readingResources?.[assignment.reading] : null;
+  if (!resource) return createMissingReadingLesson(date);
+  return {
+    id: assignment.reading,
+    title: resource.title,
+    date: resource.label,
+    paragraphs: resource.paragraphs || [],
+  };
+}
+
+function getDayAssignment(date) {
+  const dateKey = toDateKey(date);
+  const month = contentLibrary?.months?.[dateKey.slice(0, 7)];
+  return month?.days?.[dateKey] || null;
+}
+
+function createMissingEnglishLesson(date) {
+  return {
+    missing: true,
+    title: "该日期英语视频待入库",
+    date: "Pending",
+    source: `${formatDisplayDate(date)} 还没有通过授权和去重校验的视频资源。`,
+    videoUrl: "",
+    subtitles: [
+      {
+        start: 0,
+        end: 0,
+        en: "This date is waiting for an approved video resource.",
+        zh: "该日期正在等待通过审核的视频资源。",
+      },
+    ],
+    words: [
+      {
+        word: "pending",
+        ipa: "/ˈpendɪŋ/",
+        note: "待处理；资源库尚未为这一天分配不重复的合规内容。",
+      },
+    ],
+  };
+}
+
+function createMissingReadingLesson(date) {
+  return {
+    missing: true,
+    title: "该日期中文文章待入库",
+    date: "Pending",
+    paragraphs: [
+      `${formatDisplayDate(date)} 还没有通过授权和去重校验的完整中文文章。`,
+      "资源库不会自动复用旧文章；请先补齐月度 manifest，再发布到日历。",
+    ],
+  };
+}
+
+function buildFallbackContentLibrary() {
+  const fallbackDate = toDateKey(today);
+  return {
+    months: {
+      [fallbackDate.slice(0, 7)]: {
+        status: "runtime-fallback",
+        days: {
+          [fallbackDate]: {
+            english: "fallback-english",
+            reading: "fallback-reading",
+          },
+        },
+      },
+    },
+    englishResources: {
+      "fallback-english": {
+        title: englishLessons[0].title,
+        label: "Fallback",
+        source: englishLessons[0].source,
+        license: "runtime-fallback",
+        mediaUrl: englishLessons[0].videoUrl,
+        subtitles: englishLessons[0].subtitles,
+        words: englishLessons[0].words,
+      },
+    },
+    readingResources: {
+      "fallback-reading": {
+        title: readingLessons[0].title,
+        label: "Fallback",
+        paragraphs: readingLessons[0].paragraphs,
+      },
+    },
+  };
 }
 
 function startOfDay(date) {
