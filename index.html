@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mimic 英语跟读练习</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Daily shadowing studio</p>
+        <h1>Mimic 跟读练习</h1>
+      </div>
+      <nav class="tabs" aria-label="练习板块">
+        <button class="tab active" data-target="english">英语视频</button>
+        <button class="tab" data-target="chinese">中文朗读</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="english" class="panel active">
+        <div class="practice-grid">
+          <section class="video-column" aria-label="每日英语视频">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="englishDate"></p>
+                <h2 id="englishTitle"></h2>
+              </div>
+              <button id="openVideoStudio" class="primary">全屏跟读</button>
+            </div>
+            <video id="sourceVideo" controls playsinline crossorigin="anonymous"></video>
+            <p class="source-line" id="englishSource"></p>
+          </section>
+
+          <aside class="study-column">
+            <section>
+              <div class="section-head compact">
+                <h2>逐行字幕</h2>
+                <button id="replayLine" class="ghost">播放当前句</button>
+              </div>
+              <div id="subtitleList" class="subtitle-list"></div>
+            </section>
+
+            <section>
+              <h2>重点词</h2>
+              <div id="wordList" class="word-list"></div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section id="chinese" class="panel">
+        <div class="reading-layout">
+          <section class="reading-main">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="readingDate"></p>
+                <h2 id="readingTitle"></h2>
+              </div>
+              <button id="openReadingStudio" class="primary">朗读录制</button>
+            </div>
+            <article id="readingText" class="reading-text"></article>
+          </section>
+
+          <aside class="reading-notes">
+            <h2>今日提示</h2>
+            <p id="readingNote"></p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="library">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recordings</p>
+            <h2>我的录制</h2>
+          </div>
+          <button id="clearRecordings" class="danger ghost">全部删除</button>
+        </div>
+        <div id="recordingList" class="recording-list empty">暂无录制</div>
+      </section>
+    </main>
+
+    <div id="studio" class="studio" aria-hidden="true">
+      <div class="studio-shell">
+        <div class="studio-bar">
+          <div>
+            <p class="eyebrow" id="studioMode">Video shadowing</p>
+            <h2 id="studioTitle"></h2>
+          </div>
+          <button id="closeStudio" class="icon-button" aria-label="关闭">×</button>
+        </div>
+
+        <div class="phone-frame">
+          <div class="notch"></div>
+          <canvas id="compositeCanvas" width="1170" height="2532"></canvas>
+          <div class="camera-permission" id="cameraHint">点击“打开摄像头”开始预览</div>
+        </div>
+
+        <div class="studio-controls">
+          <button id="enableCamera" class="secondary">打开摄像头</button>
+          <button id="startRecording" class="primary" disabled>开始录制</button>
+          <button id="stopRecording" class="danger" disabled>停止</button>
+        </div>
+      </div>
+    </div>
+
+    <video id="cameraVideo" playsinline muted hidden></video>
+    <script src="./app.js"></script>
+  </body>
+</html>
