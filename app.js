@@ -349,21 +349,21 @@ function selectProblem(index) {
 }
 
 function bindCoding() {
-  $("#checkSyntax").addEventListener("click", () => {
-    const result = analyzePythonCode($("#codeEditor").value, codingProblems[activeProblemIndex]);
+  $("#checkSyntax").addEventListener("click", async () => {
+    const result = await analyzePythonCode($("#codeEditor").value, codingProblems[activeProblemIndex]);
     $("#judgeOutput").textContent = formatAnalysis(result);
   });
-  $("#submitCode").addEventListener("click", () => {
+  $("#submitCode").addEventListener("click", async () => {
     const problem = codingProblems[activeProblemIndex];
     const submittedCode = $("#codeEditor").value;
-    const result = analyzePythonCode(submittedCode, problem);
+    const result = await analyzePythonCode(submittedCode, problem);
     recordCodingSubmission(problem, result);
     const apiKey = $("#apiKeyInput").value.trim();
     const verdict = result.errors.length
       ? "Rejected: 先修复下面的语法/结构问题。"
       : apiKey
-        ? "Local Accepted: 本地预检通过。API 深度判题接口待接入后端代理。"
-        : "Local Accepted: 本地语法和结构预检通过。正式运行测试需要接入后端 Python sandbox。";
+        ? "Local Accepted: 本地 Python 预检通过。API 深度判题接口待接入后端代理。"
+        : "Local Accepted: 本地 Python 语法预检通过。正式测试执行仍需安全沙箱和题目用例。";
     renderCodingLesson();
     $("#codeEditor").value = submittedCode;
     $("#judgeOutput").textContent = `${verdict}\n\n${formatAnalysis(result)}`;
@@ -1028,7 +1028,33 @@ function createMissingCodingProblem(date) {
   };
 }
 
-function analyzePythonCode(code, problem) {
+async function analyzePythonCode(code, problem) {
+  try {
+    const response = await fetch("/api/python/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code,
+        expectedSignature: problem?.expectedSignature || "",
+        keywords: problem?.keywords || [],
+      }),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const result = await response.json();
+    return {
+      backend: result.backend || "python-ast",
+      errors: Array.isArray(result.errors) ? result.errors : [],
+      warnings: Array.isArray(result.warnings) ? result.warnings : [],
+    };
+  } catch (error) {
+    const fallback = analyzePythonCodeLocally(code, problem);
+    fallback.backend = "browser-fallback";
+    fallback.warnings.push("本地 Python 后端不可用，已回退到浏览器预检。请用 `python3 server.py` 启动本地后端。");
+    return fallback;
+  }
+}
+
+function analyzePythonCodeLocally(code, problem) {
   const errors = [];
   const warnings = [];
   const lines = code.split("\n");
@@ -1073,12 +1099,16 @@ function analyzePythonCode(code, problem) {
   if (problem?.keywords?.length && keywordHits.length === 0) {
     warnings.push(`没有检测到主题关键词：${problem.keywords.join(", ")}。这不一定错，但建议确认解法模式。`);
   }
-  return { errors, warnings };
+  return { backend: "browser-fallback", errors, warnings };
 }
 
 function formatAnalysis(result) {
   const lines = [];
-  if (!result.errors.length && !result.warnings.length) return "未发现本地可检测的问题。";
+  if (result.backend) lines.push(`Backend: ${result.backend}`);
+  if (!result.errors.length && !result.warnings.length) {
+    lines.push("未发现本地可检测的问题。");
+    return lines.join("\n");
+  }
   if (result.errors.length) {
     lines.push("Errors:");
     result.errors.forEach((error) => lines.push(`- ${error}`));

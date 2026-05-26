@@ -1,0 +1,68 @@
+{
+  "updatedAt": "2026-05-26T00:00:00+08:00",
+  "policy": "English and Chinese learning materials must come from open platforms, public-domain collections, Creative Commons sources, official open media, or explicitly authorized partner/self-produced content.",
+  "english": [
+    {
+      "name": "Wikimedia Commons",
+      "url": "https://commons.wikimedia.org/",
+      "acceptedLicenses": ["CC BY", "CC BY-SA", "public domain"],
+      "use": "Direct media files with compatible licenses and attribution."
+    },
+    {
+      "name": "Internet Archive",
+      "url": "https://archive.org/",
+      "acceptedLicenses": ["public domain", "Creative Commons"],
+      "use": "Open video/audio files and public-domain speech recordings."
+    },
+    {
+      "name": "Project Gutenberg",
+      "url": "https://www.gutenberg.org/",
+      "acceptedLicenses": ["public domain"],
+      "use": "English public-domain readings and excerpts."
+    },
+    {
+      "name": "Standard Ebooks",
+      "url": "https://standardebooks.org/",
+      "acceptedLicenses": ["public domain"],
+      "use": "Clean public-domain English text editions."
+    },
+    {
+      "name": "Official open government/media channels",
+      "url": "https://www.usa.gov/",
+      "acceptedLicenses": ["public domain", "explicit reuse permission"],
+      "use": "Speeches, briefings, and education media with direct reuse permission."
+    }
+  ],
+  "chinese": [
+    {
+      "name": "中文维基文库",
+      "url": "https://zh.wikisource.org/",
+      "acceptedLicenses": ["CC BY-SA", "public domain"],
+      "use": "完整中文文章、古文、现代公版文本。"
+    },
+    {
+      "name": "Wikimedia Commons",
+      "url": "https://commons.wikimedia.org/",
+      "acceptedLicenses": ["CC BY", "CC BY-SA", "public domain"],
+      "use": "中文音视频或可配套朗读的开放媒体。"
+    },
+    {
+      "name": "Internet Archive",
+      "url": "https://archive.org/",
+      "acceptedLicenses": ["public domain", "Creative Commons"],
+      "use": "中文公版书籍扫描、音频和开放集合。"
+    },
+    {
+      "name": "Chinese Text Project",
+      "url": "https://ctext.org/",
+      "acceptedLicenses": ["check item-level terms before ingestion"],
+      "use": "仅在具体条目许可允许时用于中文经典文本。"
+    }
+  ],
+  "disallowedByDefault": [
+    "YouTube videos without explicit direct media reuse permission",
+    "commercial news clips without redistribution permission",
+    "copyrighted modern essays without publisher or author authorization",
+    "third-party subtitles copied without license"
+  ]
+}

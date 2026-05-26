@@ -29,7 +29,13 @@ LeetCode 75 and Grind 75 are useful because they are time-boxed and interview-fo
 
 ## Current Judge Boundary
 
-The browser implementation does local precheck only:
+The website now prefers the local Python endpoint in `server.py`:
+
+- run `python3 server.py` from the project root
+- open `http://127.0.0.1:4173/`
+- the front-end posts code to `/api/python/analyze`
+
+The local backend currently performs AST-based syntax analysis plus structural checks:
 
 - bracket matching
 - missing colon after Python control statements
@@ -37,4 +43,4 @@ The browser implementation does local precheck only:
 - expected function signature check
 - simple topic keyword warning
 
-It does not yet execute arbitrary Python test cases in a sandbox. A production judge should use a server-side Python sandbox with timeouts, memory limits, test harnesses, and line-level traceback parsing. The API key field is present for future AI-assisted error explanation, but direct browser calls with a user API key should be replaced by a backend proxy before production use.
+If the Python backend is not running, the browser falls back to its older local precheck and shows a warning. It does not yet execute arbitrary Python test cases in a sandbox. A production judge should add isolated execution with timeouts, memory limits, test harnesses, and line-level traceback parsing. The API key field is present for future AI-assisted error explanation, but direct browser calls with a user API key should be replaced by a backend proxy before production use.

@@ -25,3 +25,5 @@
 14. Add a Coding module with daily interview-focused problem sets, local syntax checks, submit prechecks, and progressive hints.
 15. Add a daily AI-industry-centered Insight module interpreted through cognitive neuroscience, neurodiversity, developmental psychology, and social simulation, with source links, Chinese summaries, and favorites.
 16. Add Coding mistake tracking with per-problem submit/error counts and a local wrong-answer notebook.
+17. Move Coding syntax analysis to a local Python backend before adding sandboxed execution.
+18. Restrict English and Chinese production materials to open platforms, public-domain collections, Creative Commons sources, official open media, or explicitly authorized content.

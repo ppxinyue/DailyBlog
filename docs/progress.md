@@ -41,3 +41,7 @@
 - Added local Coding stats with per-problem submit counts, error counts, wrong-book flags, and last error summaries.
 - Added a Coding wrong-answer notebook UI with remove and clear controls.
 - Verified that a failed submit increments submit/error counts, adds the problem to the wrong-answer notebook, and preserves the judge output.
+- Added `server.py` as a local Python backend for Coding syntax analysis through `/api/python/analyze`.
+- Updated the Coding UI to prefer the local Python backend and fall back to browser prechecks when the backend is not running.
+- Added `data/open-platform-sources.json` and documented that English and Chinese production materials must come from open platforms or explicitly authorized sources.
+- Verified `server.py` syntax through Python AST parsing, verified `app.js` with `node --check`, ran content and insight validators, and tested `/api/python/analyze` with invalid and valid snippets on `127.0.0.1:4174`.
