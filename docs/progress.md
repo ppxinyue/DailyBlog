@@ -62,3 +62,4 @@
 - Increased Insight source priority for Anthropic technical posts and added same-day hot-topic channels from X Trends, Hacker News, Reddit, Hugging Face Papers, and GitHub Trending.
 - Restored the large page title, added daily completion checkboxes to the first three cards, and changed reflection placeholders to `write something`.
 - Added visible source and domain metadata to every Insight item.
+- Restyled the page into a cleaner light app layout with a centered white panel, soft grey cards, rounded controls, and removed visible checkbox helper text.
