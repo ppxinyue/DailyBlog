@@ -26,3 +26,4 @@
 15. Restyle the page as a modern light app page with a centered white panel, soft grey cards, rounded corners, and no additional explanatory text.
 16. Add a compact calendar, simple completion statistics, and local Insight favorites.
 17. Keep section subtitles visually smaller than the main page title.
+18. Keep Insight as the first content module under the calendar/statistics overview.

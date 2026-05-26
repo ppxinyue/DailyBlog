@@ -65,3 +65,4 @@
 - Restyled the page into a cleaner light app layout with a centered white panel, soft grey cards, rounded controls, and removed visible checkbox helper text.
 - Added a compact monthly calendar, simple Today/Month/Saved statistics, and local Insight star favorites.
 - Reduced section title sizing so module headings sit below the main page title hierarchy.
+- Moved the Insight module to the top of the content stack directly under the calendar/statistics overview.
