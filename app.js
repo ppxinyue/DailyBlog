@@ -62,11 +62,16 @@ function renderInsightChannels(channels) {
 
 function renderInsightItem(item) {
   const star = item.starSummary || {};
+  const domains = Array.isArray(item.tags) ? item.tags.join(" / ") : "";
+  const source = [item.sourceName, item.sourceType].filter(Boolean).join(" / ");
   return `
     <article class="insight-item">
       <label class="read-row">
         <input type="checkbox" data-insight-read="${item.id}" ${readInsights[item.id] ? "checked" : ""} />
-        <a href="${item.url}" target="_blank" rel="noreferrer">${item.title}</a>
+        <span>
+          <a href="${item.url}" target="_blank" rel="noreferrer">${item.title}</a>
+          <span class="insight-meta">来源：${source || "未注明"} · 领域：${domains || "未注明"}</span>
+        </span>
       </label>
       <dl class="star-summary">
         <dt>S</dt><dd>${star.situation || item.zhSummary || ""}</dd>

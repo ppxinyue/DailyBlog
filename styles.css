@@ -175,6 +175,14 @@ textarea:focus {
   font-size: 16px;
 }
 
+.insight-meta {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  margin-top: 6px;
+}
+
 .star-summary {
   display: grid;
   gap: 7px 10px;

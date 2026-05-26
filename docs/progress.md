@@ -61,3 +61,4 @@
 - Added the Insight scope line and visible source-channel list, including xAI, Neuralink, and Tesla AI / Optimus.
 - Increased Insight source priority for Anthropic technical posts and added same-day hot-topic channels from X Trends, Hacker News, Reddit, Hugging Face Papers, and GitHub Trending.
 - Restored the large page title, added daily completion checkboxes to the first three cards, and changed reflection placeholders to `write something`.
+- Added visible source and domain metadata to every Insight item.

@@ -22,3 +22,4 @@
 11. Show the Insight scope line and the active source-channel list in small text.
 12. Prioritize Anthropic technical posts and include same-day X/forum hot topics when they overlap the user's focus areas.
 13. Keep a large page title, add completion checkboxes for the first three cards, and use `write something` as the reflection placeholder.
+14. Show source and domain metadata for every Insight item.
