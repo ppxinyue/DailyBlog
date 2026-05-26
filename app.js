@@ -117,10 +117,20 @@ function renderStats() {
   const todayDone = getDayCompletion(todayKey);
   const favoriteCount = Object.values(favoriteInsights).filter(Boolean).length;
   const fullDays = getMonthDateKeys(today.getFullYear(), today.getMonth()).filter((key) => getDayCompletion(key).done === 4).length;
+  const monthDays = getMonthDateKeys(today.getFullYear(), today.getMonth()).length;
+  const stats = [
+    { label: "Today", value: todayDone.done, max: 4 },
+    { label: "Month", value: fullDays, max: monthDays },
+    { label: "Saved", value: favoriteCount, max: Math.max(favoriteCount, 6) }
+  ];
   target.innerHTML = `
-    <span>Today ${todayDone.done}/4</span>
-    <span>Month ${fullDays}</span>
-    <span>Saved ${favoriteCount}</span>
+    ${stats.map((stat) => `
+      <div class="stat-chart">
+        <span>${stat.label}</span>
+        <strong>${stat.value}</strong>
+        <i style="--value: ${Math.min(100, Math.round((stat.value / stat.max) * 100))}%"></i>
+      </div>
+    `).join("")}
   `;
 }
 

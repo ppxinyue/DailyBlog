@@ -28,3 +28,4 @@
 17. Keep section subtitles visually smaller than the main page title.
 18. Keep Insight as the first content module under the calendar/statistics overview.
 19. Keep the calendar lightweight and paired with a compact statistics panel.
+20. Keep the calendar in the left half of the overview and show lightweight statistic charts on the right.
