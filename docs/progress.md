@@ -66,3 +66,4 @@
 - Added a compact monthly calendar, simple Today/Month/Saved statistics, and local Insight star favorites.
 - Reduced section title sizing so module headings sit below the main page title hierarchy.
 - Moved the Insight module to the top of the content stack directly under the calendar/statistics overview.
+- Compressed the overview into a lightweight statistics panel with a smaller mini calendar.

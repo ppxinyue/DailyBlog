@@ -50,57 +50,64 @@ body {
 }
 
 .overview-card {
+  align-items: center;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 18px;
-  display: grid;
-  gap: 18px;
-  padding: 22px;
+  border-radius: 16px;
+  display: flex;
+  gap: 22px;
+  justify-content: space-between;
+  padding: 16px;
 }
 
 .daily-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 6px;
 }
 
 .daily-stats span {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 8px 12px;
+  padding: 6px 9px;
 }
 
 .calendar {
   display: grid;
-  gap: 10px;
+  flex: 0 0 154px;
+  gap: 6px;
+  max-width: 154px;
 }
 
 .calendar-month {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
+  text-align: right;
 }
 
 .calendar-grid {
   display: grid;
-  gap: 6px;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  grid-template-columns: repeat(7, 16px);
+  justify-content: end;
 }
 
 .calendar-cell {
   align-items: center;
-  aspect-ratio: 1;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 6px;
   color: var(--muted);
   display: flex;
-  font-size: 13px;
+  font-size: 9px;
   font-weight: 700;
+  height: 16px;
   justify-content: center;
+  width: 16px;
 }
 
 .calendar-blank {
@@ -324,11 +331,25 @@ textarea:focus {
     padding: 18px;
   }
 
-  .todo-card {
-    padding: 20px;
+  .overview-card {
+    align-items: start;
+    display: grid;
+    gap: 14px;
+  }
+
+  .calendar {
+    max-width: 154px;
+  }
+
+  .calendar-month {
+    text-align: left;
   }
 
   .calendar-grid {
-    gap: 4px;
+    justify-content: start;
+  }
+
+  .todo-card {
+    padding: 20px;
   }
 }
