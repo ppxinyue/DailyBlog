@@ -156,6 +156,7 @@ let readingLesson = createMissingReadingLesson(selectedDate);
 let codingProblems = [];
 let insightItems = [];
 let favoriteInsights = loadFavoriteInsights();
+let codingStats = loadCodingStats();
 let activeSubtitle = 0;
 let activeProblemIndex = 0;
 let hintIndex = 0;
@@ -326,6 +327,7 @@ function renderCodingLesson() {
         <button class="problem-card ${index === activeProblemIndex ? "active" : ""}" data-index="${index}">
           <strong>${index + 1}. ${problem.title}</strong>
           <span class="problem-meta">${problem.topic} · ${problem.difficulty} · ${problem.hot100 ? "Hot 100" : problem.source}</span>
+          <span class="problem-meta">${formatProblemStats(problem)}</span>
           <span class="subtitle-zh">${problem.promptNote}</span>
         </button>
       `,
@@ -337,6 +339,7 @@ function renderCodingLesson() {
   $("#codeEditor").value = activeProblem.starterCode || "";
   hintIndex = 0;
   renderHints();
+  renderWrongBook();
   $("#judgeOutput").textContent = "先读题，再写代码。点击“语法检查”会指出本地可检测的行号和结构问题。";
 }
 
@@ -351,25 +354,124 @@ function bindCoding() {
     $("#judgeOutput").textContent = formatAnalysis(result);
   });
   $("#submitCode").addEventListener("click", () => {
-    const result = analyzePythonCode($("#codeEditor").value, codingProblems[activeProblemIndex]);
+    const problem = codingProblems[activeProblemIndex];
+    const submittedCode = $("#codeEditor").value;
+    const result = analyzePythonCode(submittedCode, problem);
+    recordCodingSubmission(problem, result);
     const apiKey = $("#apiKeyInput").value.trim();
     const verdict = result.errors.length
       ? "Rejected: 先修复下面的语法/结构问题。"
       : apiKey
         ? "Local Accepted: 本地预检通过。API 深度判题接口待接入后端代理。"
         : "Local Accepted: 本地语法和结构预检通过。正式运行测试需要接入后端 Python sandbox。";
+    renderCodingLesson();
+    $("#codeEditor").value = submittedCode;
     $("#judgeOutput").textContent = `${verdict}\n\n${formatAnalysis(result)}`;
   });
   $("#nextHint").addEventListener("click", () => {
     hintIndex += 1;
     renderHints();
   });
+  $("#clearWrongBook").addEventListener("click", clearWrongBook);
 }
 
 function renderHints() {
   const problem = codingProblems[activeProblemIndex] || createMissingCodingProblem(selectedDate);
   const visibleHints = problem.hints.slice(0, Math.max(1, hintIndex));
   $("#hintList").innerHTML = visibleHints.map((hint, index) => `<div class="hint-item">${index + 1}. ${hint}</div>`).join("");
+}
+
+function formatProblemStats(problem) {
+  const stats = getProblemStats(problem);
+  return `提交 ${stats.submitCount} · 错误 ${stats.errorCount}${stats.inWrongBook ? " · 错题本" : ""}`;
+}
+
+function getProblemStats(problem) {
+  const key = getProblemKey(problem);
+  return codingStats[key] || {
+    submitCount: 0,
+    errorCount: 0,
+    inWrongBook: false,
+    lastError: "",
+    title: problem?.title || "Untitled",
+    topic: problem?.topic || "Unknown",
+    sourceUrl: problem?.sourceUrl || "",
+  };
+}
+
+function recordCodingSubmission(problem, result) {
+  const key = getProblemKey(problem);
+  const current = getProblemStats(problem);
+  const hasError = result.errors.length > 0;
+  codingStats[key] = {
+    ...current,
+    submitCount: current.submitCount + 1,
+    errorCount: current.errorCount + (hasError ? 1 : 0),
+    inWrongBook: hasError ? true : current.inWrongBook,
+    lastError: hasError ? result.errors[0] : current.lastError,
+    lastSubmittedAt: new Date().toISOString(),
+    title: problem?.title || current.title,
+    topic: problem?.topic || current.topic,
+    sourceUrl: problem?.sourceUrl || current.sourceUrl,
+  };
+  saveCodingStats();
+}
+
+function renderWrongBook() {
+  const list = $("#wrongBookList");
+  const items = Object.entries(codingStats).filter(([, stats]) => stats.inWrongBook);
+  if (!items.length) {
+    list.className = "favorite-list empty";
+    list.textContent = "暂无错题";
+    return;
+  }
+  list.className = "favorite-list";
+  list.innerHTML = items
+    .map(
+      ([key, stats]) => `
+        <div class="wrong-book-item">
+          <strong>${stats.title}</strong>
+          <span>${stats.topic} · 提交 ${stats.submitCount} · 错误 ${stats.errorCount}</span>
+          <small>${stats.lastError || "待复盘"}</small>
+          <button class="ghost remove-wrong" data-key="${key}">移出</button>
+        </div>
+      `,
+    )
+    .join("");
+  document.querySelectorAll(".remove-wrong").forEach((button) => {
+    button.addEventListener("click", () => removeFromWrongBook(button.dataset.key));
+  });
+}
+
+function removeFromWrongBook(key) {
+  if (!codingStats[key]) return;
+  codingStats[key].inWrongBook = false;
+  saveCodingStats();
+  renderCodingLesson();
+}
+
+function clearWrongBook() {
+  Object.keys(codingStats).forEach((key) => {
+    codingStats[key].inWrongBook = false;
+  });
+  saveCodingStats();
+  renderCodingLesson();
+}
+
+function getProblemKey(problem) {
+  return problem?.slug || problem?.id || problem?.title || "unknown-problem";
+}
+
+function loadCodingStats() {
+  try {
+    return JSON.parse(localStorage.getItem("mimic-coding-stats") || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveCodingStats() {
+  localStorage.setItem("mimic-coding-stats", JSON.stringify(codingStats));
 }
 
 function renderInsights() {

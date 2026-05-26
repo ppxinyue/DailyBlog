@@ -416,6 +416,24 @@ main {
   text-decoration: none;
 }
 
+.wrong-book-item {
+  background: var(--surface-2);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+}
+
+.wrong-book-item span,
+.wrong-book-item small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.wrong-book-item .ghost {
+  justify-self: start;
+}
+
 .library {
   margin-top: 18px;
 }
