@@ -1,5 +1,6 @@
 const todayKey = new Date().toISOString().slice(0, 10);
 const notes = JSON.parse(localStorage.getItem("mimic-daily-notes") || "{}");
+const completions = JSON.parse(localStorage.getItem("mimic-daily-completions") || "{}");
 const readInsights = JSON.parse(localStorage.getItem("mimic-read-insights") || "{}");
 
 document.querySelectorAll("[data-note]").forEach((input) => {
@@ -8,6 +9,15 @@ document.querySelectorAll("[data-note]").forEach((input) => {
   input.addEventListener("input", () => {
     notes[key] = input.value;
     localStorage.setItem("mimic-daily-notes", JSON.stringify(notes));
+  });
+});
+
+document.querySelectorAll("[data-complete]").forEach((input) => {
+  const key = `${todayKey}:${input.dataset.complete}`;
+  input.checked = Boolean(completions[key]);
+  input.addEventListener("change", () => {
+    completions[key] = input.checked;
+    localStorage.setItem("mimic-daily-completions", JSON.stringify(completions));
   });
 });
 

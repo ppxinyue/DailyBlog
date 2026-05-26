@@ -7,34 +7,55 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <header class="page-header">
+      <h1>Daily Todo</h1>
+    </header>
     <main class="todo-grid" aria-label="每日任务">
       <section class="todo-card">
-        <h1>英文跟读</h1>
+        <div class="card-heading">
+          <h2>英文跟读</h2>
+          <label class="complete-check">
+            <input type="checkbox" data-complete="english" />
+            <span>done</span>
+          </label>
+        </div>
         <a href="https://shadowingenglish.com/practice" target="_blank" rel="noreferrer">ShadowingEnglish</a>
-        <textarea data-note="english" placeholder="每日学习感受"></textarea>
+        <textarea data-note="english" placeholder="write something"></textarea>
       </section>
 
       <section class="todo-card">
-        <h1>中文阅读</h1>
+        <div class="card-heading">
+          <h2>中文阅读</h2>
+          <label class="complete-check">
+            <input type="checkbox" data-complete="chinese" />
+            <span>done</span>
+          </label>
+        </div>
         <a href="https://meiriyiwen.com/" target="_blank" rel="noreferrer">每日一文</a>
-        <textarea data-note="chinese" placeholder="每日学习感受"></textarea>
+        <textarea data-note="chinese" placeholder="write something"></textarea>
       </section>
 
       <section class="todo-card">
-        <h1>Coding</h1>
+        <div class="card-heading">
+          <h2>Coding</h2>
+          <label class="complete-check">
+            <input type="checkbox" data-complete="coding" />
+            <span>done</span>
+          </label>
+        </div>
         <div class="link-row">
           <a href="https://neetcode.io/roadmap" target="_blank" rel="noreferrer">NeetCode</a>
           <a href="https://www.hellointerview.com/practice" target="_blank" rel="noreferrer">Hello Interview</a>
         </div>
-        <textarea data-note="coding" placeholder="每日学习感受"></textarea>
+        <textarea data-note="coding" placeholder="write something"></textarea>
       </section>
 
       <section class="todo-card">
-        <h1>Insight</h1>
+        <h2>Insight</h2>
         <p class="insight-subtitle">AI + Cognitive Neuroscience, Neurodiversity, Mental Health, Developmental Psychology, Social Simulation, Children, Education</p>
         <div id="insightChannels" class="channel-list"></div>
         <div id="insightList" class="insight-list"></div>
-        <textarea data-note="insight" placeholder="每日学习感受"></textarea>
+        <textarea data-note="insight" placeholder="write something"></textarea>
       </section>
     </main>
     <script src="./app.js"></script>
