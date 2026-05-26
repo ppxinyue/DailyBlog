@@ -49,6 +49,48 @@ const hot100 = [
 ];
 
 const problemTitles = new Map(hot100.map((slug) => [slug, titleFromSlug(slug)]));
+const llmTaskTemplates = [
+  ["stable-softmax", "Implement numerically stable softmax", "Easy", "Numerics", "softmax"],
+  ["cross-entropy", "Implement cross entropy from logits", "Easy", "Loss Functions", "logsumexp"],
+  ["top-k", "Implement top-k filtering", "Easy", "Decoding", "top-k"],
+  ["top-p", "Implement nucleus sampling filter", "Medium", "Decoding", "top-p"],
+  ["temperature", "Apply temperature scaling to logits", "Easy", "Decoding", "temperature"],
+  ["layernorm", "Implement LayerNorm forward pass", "Medium", "Normalization", "layer norm"],
+  ["rmsnorm", "Implement RMSNorm forward pass", "Medium", "Normalization", "rms norm"],
+  ["gelu", "Implement GELU activation", "Easy", "Activations", "gelu"],
+  ["swiglu", "Implement SwiGLU activation", "Medium", "Activations", "swiglu"],
+  ["dot-attention", "Implement scaled dot-product attention", "Medium", "Attention", "attention"],
+  ["causal-mask", "Build a causal attention mask", "Medium", "Attention", "mask"],
+  ["masked-softmax", "Implement masked softmax", "Medium", "Attention", "mask"],
+  ["multi-head-shape", "Reshape tensors for multi-head attention", "Medium", "Attention", "reshape"],
+  ["multi-head-attention", "Implement multi-head attention forward", "Hard", "Attention", "multi-head"],
+  ["positional-encoding", "Implement sinusoidal positional encoding", "Medium", "Embeddings", "position"],
+  ["rotary-embedding", "Apply rotary positional embedding", "Hard", "Embeddings", "rope"],
+  ["embedding-lookup", "Implement token embedding lookup", "Easy", "Embeddings", "embedding"],
+  ["kv-cache-append", "Append keys and values to KV cache", "Medium", "Inference", "cache"],
+  ["kv-cache-attention", "Run one-token attention with KV cache", "Hard", "Inference", "cache"],
+  ["beam-search-step", "Implement one beam search step", "Medium", "Decoding", "beam"],
+  ["greedy-decode", "Implement greedy decoding loop", "Easy", "Decoding", "argmax"],
+  ["perplexity", "Compute perplexity from token losses", "Easy", "Evaluation", "perplexity"],
+  ["bleu-1", "Implement unigram BLEU score", "Medium", "Evaluation", "bleu"],
+  ["rouge-l", "Implement ROUGE-L via LCS", "Medium", "Evaluation", "lcs"],
+  ["cosine-similarity", "Compute cosine similarity matrix", "Easy", "Retrieval", "cosine"],
+  ["vector-search", "Implement brute-force vector search", "Easy", "Retrieval", "nearest"],
+  ["mrr", "Compute mean reciprocal rank", "Easy", "Evaluation", "rank"],
+  ["ndcg", "Compute NDCG at k", "Medium", "Evaluation", "rank"],
+  ["chunk-text", "Chunk text with overlap", "Easy", "RAG", "chunk"],
+  ["rerank", "Merge retrieval scores with reranker scores", "Medium", "RAG", "rerank"],
+  ["lora-forward", "Implement LoRA linear layer forward", "Medium", "Fine-tuning", "lora"],
+  ["quantize-int8", "Implement simple int8 quantization", "Medium", "Optimization", "quant"],
+  ["dequantize-int8", "Implement dequantization", "Easy", "Optimization", "quant"],
+  ["gradient-clipping", "Implement global norm gradient clipping", "Medium", "Training", "clip"],
+  ["adamw-step", "Implement AdamW optimizer step", "Hard", "Training", "adamw"],
+  ["linear-forward", "Implement batched linear layer", "Easy", "Neural Nets", "matmul"],
+  ["conv1d", "Implement simple 1D convolution", "Medium", "Neural Nets", "conv"],
+  ["dropout", "Implement dropout forward pass", "Easy", "Training", "dropout"],
+  ["batch-pad", "Pad token sequences into a batch", "Easy", "Data", "padding"],
+  ["attention-complexity", "Estimate attention memory cost", "Medium", "Systems", "memory"],
+];
 const months = {};
 const englishResources = {};
 const readingResources = {};
@@ -129,46 +171,49 @@ await fs.writeFile(output, `${JSON.stringify(library, null, 2)}\n`);
 console.log(`Generated ${totalDays} days into ${output.pathname}`);
 
 function buildCodingIds(day, topic) {
-  const hotSlug = hot100[day % hot100.length];
+  const primaryHot = hot100[day % hot100.length];
+  const secondaryHot = hot100[(day + 50) % hot100.length];
   const dayNumber = day + 1;
-  const inferredTopic = topicForSlug(hotSlug);
   const ids = [
-    `lc-${hotSlug}`,
-    `drill-${String(dayNumber).padStart(3, "0")}-a`,
-    `drill-${String(dayNumber).padStart(3, "0")}-b`,
+    `lc-${primaryHot}`,
+    `lc-${secondaryHot}`,
+    `llm-${String(dayNumber).padStart(3, "0")}`,
   ];
   for (const id of ids) {
     if (!codingResources[id]) {
       if (id.startsWith("lc-")) {
         const slug = id.replace(/^lc-/, "");
-        codingResources[id] = buildCodingResource(slug, inferredTopic, hot100.includes(slug));
+        codingResources[id] = buildCodingResource(slug, topicForSlug(slug), hot100.includes(slug));
       } else {
-        codingResources[id] = buildDrillResource(id, inferredTopic, dayNumber, id.endsWith("-a") ? "A" : "B");
+        codingResources[id] = buildLlmResource(id, dayNumber);
       }
     }
   }
   return ids;
 }
 
-function buildDrillResource(id, topic, day, variant) {
-  const functionName = `solveDay${day}${variant}`;
+function buildLlmResource(id, day) {
+  const template = llmTaskTemplates[(day - 1) % llmTaskTemplates.length];
+  const [slug, title, difficulty, topic, keyword] = template;
+  const functionName = functionNameFromSlug(slug);
   return {
-    title: `${topic} Drill ${day}${variant}`,
+    title,
     slug: id,
-    source: "Mimic LeetCode-style drill",
+    source: "Mimic LLM hand-coding drill",
     sourceUrl: "",
-    track: "Python LeetCode",
+    track: "Python LLM Internals",
     topic,
-    difficulty: variant === "A" ? "Easy" : "Medium",
+    difficulty,
     hot100: false,
-    promptNote: "Original practice prompt placeholder for the same pattern as today's Hot 100 problem.",
-    starterCode: `class Solution:\n    def ${functionName}(self, nums):\n        # TODO: practice the ${topic} pattern\n        pass\n`,
+    category: "llm",
+    promptNote: "Original LLM interview hand-coding drill. Implement with plain Python or NumPy-style reasoning.",
+    starterCode: `def ${functionName}(x):\n    # TODO: implement ${title}\n    pass\n`,
     expectedSignature: `def ${functionName}`,
-    keywords: topics.find(([name]) => name === topic)?.[2] || ["state", "loop", "edge case"],
+    keywords: [keyword, "shape", "edge case"],
     hints: [
-      `Reuse the ${topic} pattern from the Hot 100 problem.`,
-      "Name the invariant before adding conditions.",
-      "Check empty input, one-element input, and duplicate values.",
+      `State the expected tensor/list shape before writing ${functionName}.`,
+      "Handle numerical stability, masking, or empty inputs when relevant.",
+      "Write a tiny example and verify the output shape first.",
     ],
   };
 }
@@ -185,6 +230,7 @@ function buildCodingResource(slug, topic, hot) {
     topic,
     difficulty: inferDifficulty(slug),
     hot100: hot,
+    category: "leetcode",
     promptNote: "Open the source URL for the official problem statement. This library stores metadata, not copied LeetCode problem text.",
     starterCode: `class Solution:\n    def ${functionName}(self, nums):\n        # TODO: implement ${title}\n        pass\n`,
     expectedSignature: `def ${functionName}`,

@@ -12,19 +12,19 @@
 - Start date: 2026-05-26.
 - Length: 100 consecutive days.
 - Daily coding load: 3 Python problems.
-- Daily theme: all 3 problems for a day share one topic.
-- Coverage: the 100 official-style Hot 100 metadata entries are each assigned once as the anchor problem for a day.
-- Practice expansion: each Hot 100 anchor is paired with two original same-pattern drills so the day has 3 exercises without copying LeetCode problem text.
+- Default mix: 2 LeetCode problems and 1 LLM hand-coding drill.
+- Coverage: all 100 Hot 100 metadata entries are assigned across the first 50 days, then reused for pattern review.
+- LLM drills progress from easy numerical routines to harder transformer internals and training/inference utilities.
 
 ## Why This Structure
 
-LeetCode 75 and Grind 75 are useful because they are time-boxed and interview-focused. NeetCode is useful because it organizes problems by pattern. The 100-day resource library combines those ideas: one daily pattern, one Hot 100 anchor, two same-pattern drills, repeated exposure across arrays, two pointers, sliding window, stack, binary search, linked list, trees, graph, DP, greedy, intervals, matrix, and bit manipulation.
+LeetCode 75 and Grind 75 are useful because they are time-boxed and interview-focused. NeetCode is useful because it organizes problems by pattern. The 100-day resource library combines those ideas with a practical LLM interview track: Hot 100 coverage comes first, and daily LLM drills add hands-on practice for softmax, loss functions, normalization, attention, decoding, KV cache, retrieval metrics, LoRA, quantization, optimizer steps, and batching.
 
 ## Website Behavior
 
 - Coding resources are stored in `data/content-library.json`.
 - `scripts/generate-100-day-content.mjs` regenerates the 100-day plan.
-- `scripts/check-content-library.mjs` validates that every date has exactly 3 coding problems, same-day coding topics match, and Hot 100 coverage reaches 100/100.
+- `scripts/check-content-library.mjs` validates that every date has exactly 3 coding problems, at least one LeetCode problem, at least one LLM hand-coding problem, and Hot 100 coverage reaches 100/100.
 - The website shows a Coding tab with the 3 daily problems, starter code, syntax/structure checks, submit precheck, and progressive hints.
 
 ## Current Judge Boundary

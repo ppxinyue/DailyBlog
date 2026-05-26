@@ -55,10 +55,11 @@ The safer path is to use licensed media, direct open media files, partner APIs, 
 - Each English resource needs source, license, media URL, subtitles, translations, and vocabulary.
 - Each reading resource needs source/author, license, and complete paragraphs.
 - Coding days assign exactly three Python problems.
-- Coding days must share one topic.
+- Coding days usually assign two LeetCode problems and one LLM hand-coding drill.
+- Coding days do not have to share one topic; interview coverage and recall are more important than strict same-topic grouping.
 - Coding assignments link to official problem sources when they reference LeetCode, but do not copy proprietary problem statements.
-- The 100-day coding track covers all Hot 100 anchor problems once, then pairs each anchor with two same-pattern drills.
+- The 100-day coding track covers all Hot 100 problems and adds common LLM hand-coding drills from easy to hard.
 
 ## Current Status
 
-The current manifest is a 100-day seed beginning on 2026-05-26. English and Chinese reading entries are original editorial demo content. Coding entries include Hot 100 metadata links and original same-pattern drills. Video resources after the first demo entries remain pending until approved direct media is sourced.
+The current manifest is a 100-day seed beginning on 2026-05-26. English and Chinese reading entries are original editorial demo content. Coding entries include Hot 100 metadata links plus original LLM hand-coding drills. Video resources after the first demo entries remain pending until approved direct media is sourced.

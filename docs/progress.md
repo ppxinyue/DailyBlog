@@ -29,6 +29,7 @@
 - Verified the manifest-backed UI and pending-date UI in the browser.
 - Generated a 100-day resource library starting 2026-05-26 with English readings, Chinese readings, and daily coding assignments.
 - Added `scripts/generate-100-day-content.mjs` to regenerate the 100-day manifest.
-- Extended content validation to require exactly 3 coding problems per day, same-day coding topic consistency, and 100/100 Hot 100 anchor coverage.
+- Extended content validation to require exactly 3 coding problems per day, at least one LeetCode problem, at least one LLM hand-coding problem, and 100/100 Hot 100 coverage.
 - Added a Coding tab with daily problem cards, Python starter code, local syntax/structure checks, submit precheck, API key placeholder, and progressive hints.
 - Added `docs/leetcode-100-day-plan.md` documenting source references, plan shape, and judge boundaries.
+- Updated the 100-day generator so each day defaults to 2 LeetCode problems plus 1 LLM hand-coding drill such as softmax, LayerNorm, attention, KV cache, decoding, retrieval metrics, LoRA, quantization, and AdamW.

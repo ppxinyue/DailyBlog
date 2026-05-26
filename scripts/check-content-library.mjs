@@ -37,9 +37,13 @@ for (const [monthKey, month] of Object.entries(library.months || {})) {
       codingResources.forEach((resource, index) => {
         if (!resource) errors.push(`${dateKey} references missing coding resource ${assignment.coding[index]}`);
       });
-      const topics = new Set(codingResources.filter(Boolean).map((resource) => resource.topic));
-      if (topics.size > 1) {
-        errors.push(`${dateKey} coding problems must share one topic, found: ${[...topics].join(", ")}`);
+      const leetcodeCount = codingResources.filter((resource) => resource?.category === "leetcode").length;
+      const llmCount = codingResources.filter((resource) => resource?.category === "llm").length;
+      if (leetcodeCount < 1) {
+        errors.push(`${dateKey} must include at least one LeetCode problem`);
+      }
+      if (llmCount < 1) {
+        errors.push(`${dateKey} must include at least one LLM hand-coding problem`);
       }
     }
 
@@ -80,6 +84,10 @@ const hot100Count = Object.entries(library.codingResources || {})
   .filter(([id, resource]) => resource.hot100 && assignedCoding.has(id)).length;
 if (hot100Count < 100) {
   errors.push(`Coding plan covers ${hot100Count}/100 Hot 100 problems`);
+}
+const assignedLlm = [...assignedCoding].filter((id) => library.codingResources?.[id]?.category === "llm").length;
+if (assignedLlm < planDays) {
+  errors.push(`Coding plan assigns ${assignedLlm}/${planDays} LLM hand-coding problems`);
 }
 
 const refreshDays = library.updatePolicy?.refreshOnLastDays ?? 3;
