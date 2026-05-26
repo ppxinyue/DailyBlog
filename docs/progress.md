@@ -63,3 +63,4 @@
 - Restored the large page title, added daily completion checkboxes to the first three cards, and changed reflection placeholders to `write something`.
 - Added visible source and domain metadata to every Insight item.
 - Restyled the page into a cleaner light app layout with a centered white panel, soft grey cards, rounded controls, and removed visible checkbox helper text.
+- Added a compact monthly calendar, simple Today/Month/Saved statistics, and local Insight star favorites.

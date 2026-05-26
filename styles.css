@@ -49,6 +49,76 @@ body {
   padding: 26px;
 }
 
+.overview-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.daily-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.daily-stats span {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
+.calendar {
+  display: grid;
+  gap: 10px;
+}
+
+.calendar-month {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.calendar-grid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.calendar-cell {
+  align-items: center;
+  aspect-ratio: 1;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  display: flex;
+  font-size: 13px;
+  font-weight: 700;
+  justify-content: center;
+}
+
+.calendar-blank {
+  background: transparent;
+  border-color: transparent;
+}
+
+.calendar-cell.is-today {
+  color: var(--ink);
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.calendar-cell.is-complete {
+  background: var(--ink);
+  color: var(--panel);
+}
+
 h1,
 h2 {
   font-weight: 800;
@@ -166,6 +236,13 @@ textarea:focus {
   padding: 16px;
 }
 
+.insight-title-row {
+  align-items: start;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 34px;
+}
+
 .read-row {
   align-items: start;
   display: grid;
@@ -191,6 +268,28 @@ textarea:focus {
   font-weight: 600;
   line-height: 1.45;
   margin-top: 6px;
+}
+
+.favorite-button {
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 18px;
+  height: 34px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  width: 34px;
+}
+
+.favorite-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .star-summary {
@@ -227,5 +326,9 @@ textarea:focus {
 
   .todo-card {
     padding: 20px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
   }
 }
