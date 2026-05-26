@@ -6,9 +6,6 @@ let selectedDate = new Date(today);
 let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 let contentLibrary = null;
 let insightLibrary = null;
-let codingProblems = [];
-let activeProblemIndex = 0;
-let hintIndex = 1;
 let todoState = loadTodoState();
 
 const defaultReading = {
@@ -24,7 +21,6 @@ init();
 async function init() {
   contentLibrary = await loadJson("./data/content-library.json", buildFallbackContentLibrary());
   insightLibrary = await loadJson("./data/insights.json", { days: {} });
-  setLessonsForDate(selectedDate);
   bindEvents();
   renderAll();
 }
@@ -45,21 +41,6 @@ function bindEvents() {
       renderCalendar();
     });
   });
-  $("#checkSyntax").addEventListener("click", async () => {
-    const result = await analyzePythonCode($("#codeEditor").value, getActiveProblem());
-    $("#judgeOutput").textContent = formatAnalysis(result);
-  });
-  $("#submitCode").addEventListener("click", async () => {
-    const result = await analyzePythonCode($("#codeEditor").value, getActiveProblem());
-    if (!result.errors.length) setTaskDone("coding", true);
-    $("#judgeOutput").textContent = `${result.errors.length ? "Rejected" : "Local Accepted"}\n\n${formatAnalysis(result)}`;
-    renderStats();
-    renderCalendar();
-  });
-  $("#nextHint").addEventListener("click", () => {
-    hintIndex += 1;
-    renderHints();
-  });
 }
 
 function renderAll() {
@@ -69,7 +50,6 @@ function renderAll() {
   renderCalendar();
   renderTodoChecks();
   renderReading();
-  renderCoding();
   renderInsights();
 }
 
@@ -113,7 +93,6 @@ function renderCalendar() {
     button.textContent = day;
     button.addEventListener("click", () => {
       selectedDate = date;
-      setLessonsForDate(selectedDate);
       renderAll();
     });
     grid.append(button);
@@ -126,37 +105,6 @@ function renderReading() {
     <h3>${reading.title}</h3>
     ${reading.paragraphs.slice(0, 2).map((paragraph) => `<p>${paragraph}</p>`).join("")}
   `;
-}
-
-function renderCoding() {
-  const active = getActiveProblem();
-  $("#codingTitle").textContent = `${formatDisplayDate(selectedDate)} · ${active.topic || "Interview practice"}`;
-  $("#problemList").innerHTML = codingProblems
-    .map((problem, index) => `
-      <button class="problem-card ${index === activeProblemIndex ? "active" : ""}" data-index="${index}">
-        <span>${index + 1}. ${problem.title}</span>
-        <small>${problem.category === "llm" ? "LLM hand coding" : "LeetCode Hot 100"} · ${problem.difficulty || "Practice"}</small>
-      </button>
-    `)
-    .join("");
-  $$(".problem-card").forEach((button) => {
-    button.addEventListener("click", () => {
-      activeProblemIndex = Number(button.dataset.index);
-      hintIndex = 1;
-      renderCoding();
-    });
-  });
-  $("#codeEditor").value = active.starterCode || "def solve():\n    pass\n";
-  renderHints();
-  $("#judgeOutput").textContent = "本地 Python 后端会检查语法、行列位置和函数签名。";
-}
-
-function renderHints() {
-  const hints = getActiveProblem().hints || ["先写出函数签名，再处理边界条件。"];
-  $("#hintList").innerHTML = hints
-    .slice(0, Math.max(1, hintIndex))
-    .map((hint, index) => `<div class="hint-item"><strong>${index + 1}</strong><span>${hint}</span></div>`)
-    .join("");
 }
 
 function renderInsights() {
@@ -184,48 +132,6 @@ function renderInsights() {
     .join("");
 }
 
-async function analyzePythonCode(code, problem) {
-  try {
-    const response = await fetch("/api/python/analyze", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        code,
-        expectedSignature: problem?.expectedSignature || "",
-        keywords: problem?.keywords || [],
-      }),
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
-  } catch (error) {
-    return {
-      backend: "browser-fallback",
-      errors: [],
-      warnings: ["本地 Python 后端不可用。请用 `python3 server.py` 启动后端。"],
-    };
-  }
-}
-
-function formatAnalysis(result) {
-  const lines = [`Backend: ${result.backend || "unknown"}`];
-  if (!result.errors?.length && !result.warnings?.length) lines.push("未发现本地可检测的问题。");
-  if (result.errors?.length) lines.push("Errors:", ...result.errors.map((error) => `- ${error}`));
-  if (result.warnings?.length) lines.push("Warnings:", ...result.warnings.map((warning) => `- ${warning}`));
-  return lines.join("\n");
-}
-
-function setLessonsForDate(date) {
-  codingProblems = getCodingProblemsForDate(date);
-  activeProblemIndex = 0;
-  hintIndex = 1;
-}
-
-function getCodingProblemsForDate(date) {
-  const assignment = getDayAssignment(date);
-  if (!assignment?.coding?.length) return [createMissingCodingProblem(date)];
-  return assignment.coding.map((id) => contentLibrary?.codingResources?.[id] || createMissingCodingProblem(date));
-}
-
 function getReadingForDate(date) {
   const assignment = getDayAssignment(date);
   const resource = assignment ? contentLibrary?.readingResources?.[assignment.reading] : null;
@@ -236,26 +142,9 @@ function getInsightsForDate(date) {
   return insightLibrary?.days?.[toDateKey(date)] || [];
 }
 
-function getActiveProblem() {
-  return codingProblems[activeProblemIndex] || createMissingCodingProblem(selectedDate);
-}
-
 function getDayAssignment(date) {
   const dateKey = toDateKey(date);
   return contentLibrary?.months?.[dateKey.slice(0, 7)]?.days?.[dateKey] || null;
-}
-
-function createMissingCodingProblem(date) {
-  return {
-    title: "该日期 Coding 题单待入库",
-    topic: "Pending",
-    difficulty: "Pending",
-    category: "llm",
-    starterCode: "def solve():\n    pass\n",
-    expectedSignature: "def solve",
-    keywords: [],
-    hints: [`${formatDisplayDate(date)} 还没有通过校验的 Coding 题单。`],
-  };
 }
 
 function setTaskDone(task, done) {
@@ -299,8 +188,7 @@ async function loadJson(url, fallback) {
 function buildFallbackContentLibrary() {
   const key = toDateKey(today);
   return {
-    months: { [key.slice(0, 7)]: { days: { [key]: { coding: ["fallback"] } } } },
-    codingResources: { fallback: createMissingCodingProblem(today) },
+    months: { [key.slice(0, 7)]: { days: { [key]: {} } } },
     readingResources: {},
   };
 }

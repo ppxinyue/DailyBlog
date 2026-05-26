@@ -53,3 +53,5 @@
 - Updated the Daily Insight automation prompt to require `detailedSummary` and to track children, education, mental health, and AI wellbeing sources.
 - Restyled the dashboard to match the requested experimental portfolio reference: large condensed `DAILY_TODO` title, grey grid background, thick black outer frame, line-based cards, monochrome typography, and orange action accents.
 - Removed all remaining recording UI and code: Chinese recording button, recording library, camera/studio DOM, MediaRecorder flow, and recording IndexedDB access.
+- Simplified Coding to two external resource links: NeetCode Roadmap and Hello Interview Practice.
+- Removed the local Coding editor, syntax-check controls, hints, judge output, and `/api/python/analyze` backend behavior.

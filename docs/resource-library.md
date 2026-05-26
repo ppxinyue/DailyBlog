@@ -55,15 +55,11 @@ The current product avoids local video recording and sends English practice to a
 - Each English resource needs source, license, media URL, subtitles, translations, and vocabulary.
 - Each reading resource needs source/author, license, and complete paragraphs.
 - English and Chinese materials must include an open-platform or authorization source URL before being treated as production-ready.
-- Coding days assign exactly three Python problems.
-- Coding days usually assign two LeetCode problems and one LLM hand-coding drill.
-- Coding days do not have to share one topic; interview coverage and recall are more important than strict same-topic grouping.
-- Coding assignments link to official problem sources when they reference LeetCode, but do not copy proprietary problem statements.
-- The 100-day coding track covers all Hot 100 problems and adds common LLM hand-coding drills from easy to hard.
+- Coding is currently link-only and points to NeetCode and Hello Interview. The historical generated coding metadata can remain in the manifest, but it is not rendered by the current website.
 
 ## Current Status
 
-The current manifest is a 100-day seed beginning on 2026-05-26. Coding entries include Hot 100 metadata links plus original LLM hand-coding drills. English and Chinese reading seed entries must be replaced by open-platform or explicitly authorized materials before production use. Video resources after the first demo entries remain pending until approved direct media is sourced.
+The current manifest is a 100-day seed beginning on 2026-05-26. Historical Coding entries include Hot 100 metadata links plus original LLM hand-coding drills, but the current website uses only external Coding links. English and Chinese reading seed entries must be replaced by open-platform or explicitly authorized materials before production use. Video resources after the first demo entries remain pending until approved direct media is sourced.
 
 ## Open-Platform Sources
 
