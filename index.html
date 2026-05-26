@@ -80,10 +80,9 @@
           <div class="todo-content">
             <p class="eyebrow">Chinese reading</p>
             <h2>中文每日阅读</h2>
-            <p class="card-copy">阅读每日一文，再用本地录制功能练习朗读表达。</p>
+            <p class="card-copy">跳转到每日阅读站点完成中文阅读；本站只记录任务完成状态。</p>
             <div class="button-row">
               <a id="readingLink" class="button-link" href="https://meiriyiwen.com/" target="_blank" rel="noreferrer">打开每日一文</a>
-              <button id="openReadingStudio" class="secondary">朗读录制</button>
             </div>
             <article id="readingText" class="reading-text compact"></article>
           </div>
@@ -126,44 +125,7 @@
           </div>
         </article>
       </section>
-
-      <section class="library">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Reading recordings</p>
-            <h2>中文朗读录制</h2>
-          </div>
-          <button id="clearRecordings" class="danger ghost">全部删除</button>
-        </div>
-        <div id="recordingList" class="recording-list empty">暂无录制</div>
-      </section>
     </main>
-
-    <div id="studio" class="studio" aria-hidden="true">
-      <div class="studio-shell">
-        <div class="studio-bar">
-          <div>
-            <p class="eyebrow">Chinese reading</p>
-            <h2 id="studioTitle">中文朗读</h2>
-          </div>
-          <button id="closeStudio" class="icon-button" aria-label="关闭">×</button>
-        </div>
-
-        <div class="phone-frame">
-          <div class="notch"></div>
-          <canvas id="compositeCanvas" width="1170" height="2532"></canvas>
-          <div class="camera-permission" id="cameraHint">点击“打开摄像头”开始预览</div>
-        </div>
-
-        <div class="studio-controls">
-          <button id="enableCamera" class="secondary">打开摄像头</button>
-          <button id="startRecording" class="primary" disabled>开始录制</button>
-          <button id="stopRecording" class="danger" disabled>停止</button>
-        </div>
-      </div>
-    </div>
-
-    <video id="cameraVideo" playsinline muted hidden></video>
     <script src="./app.js"></script>
   </body>
 </html>

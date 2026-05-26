@@ -185,8 +185,7 @@ main {
 
 .overview,
 .calendar-panel,
-.todo-card,
-.library {
+.todo-card {
   background: rgba(247, 247, 244, 0.86);
   border: 1px solid var(--soft-line);
   border-radius: 0;
@@ -522,8 +521,7 @@ main {
   gap: 10px;
 }
 
-.insight-list.empty,
-.recording-list.empty {
+.insight-list.empty {
   border: 1px solid var(--soft-line);
   color: var(--muted);
   padding: 18px;
@@ -563,115 +561,6 @@ main {
   text-transform: uppercase;
 }
 
-.library {
-  margin-top: 22px;
-}
-
-.recording-list {
-  display: grid;
-  gap: 0;
-}
-
-.recording-item {
-  border-top: 1px solid var(--soft-line);
-  display: grid;
-  gap: 14px;
-  grid-template-columns: 220px 1fr;
-  padding: 12px;
-}
-
-.recording-item video {
-  background: var(--line);
-  width: 100%;
-}
-
-.recording-item div {
-  align-content: start;
-  display: grid;
-  gap: 10px;
-  justify-items: start;
-}
-
-.studio {
-  background: rgba(23, 23, 23, 0.72);
-  display: none;
-  inset: 0;
-  padding: 24px;
-  position: fixed;
-  z-index: 20;
-}
-
-.studio.open {
-  display: grid;
-  place-items: center;
-}
-
-.studio-shell {
-  background:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-    var(--paper);
-  background-size: 96px 96px;
-  border: 4px solid var(--line);
-  display: grid;
-  gap: 16px;
-  max-height: calc(100vh - 48px);
-  max-width: 520px;
-  overflow: auto;
-  padding: 16px;
-  width: min(100%, 520px);
-}
-
-.studio-bar,
-.studio-controls {
-  align-items: center;
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-}
-
-.phone-frame {
-  aspect-ratio: 1170 / 2532;
-  background: var(--line);
-  border: 8px solid var(--line);
-  border-radius: 28px;
-  margin: 0 auto;
-  max-height: 62vh;
-  overflow: hidden;
-  position: relative;
-}
-
-.phone-frame canvas {
-  display: block;
-  height: 100%;
-  width: 100%;
-}
-
-.notch {
-  background: var(--line);
-  border-radius: 0 0 14px 14px;
-  height: 26px;
-  left: 50%;
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  width: 142px;
-  z-index: 2;
-}
-
-.camera-permission {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 11px;
-  left: 50%;
-  padding: 12px;
-  position: absolute;
-  top: 42%;
-  transform: translate(-50%, -50%);
-  width: 70%;
-}
-
 @media (max-width: 860px) {
   body {
     padding: 16px 10px;
@@ -679,8 +568,7 @@ main {
 
   .topbar,
   .overview,
-  .todo-grid,
-  .recording-item {
+  .todo-grid {
     grid-template-columns: 1fr;
   }
 

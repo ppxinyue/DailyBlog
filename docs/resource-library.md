@@ -10,7 +10,7 @@ Use a content pipeline instead of direct front-end scraping:
 
 1. Source registry
    - Keep a list of allowed providers, RSS feeds, public-domain text collections, partner libraries, and internally produced materials.
-   - Store license terms, source URL, attribution, duration, language level, and whether media can be downloaded, transcoded, and recorded into canvas.
+   - Store license terms, source URL, attribution, duration, language level, and whether media can be linked, embedded, downloaded, or mirrored.
    - Keep the approved open-platform registry in `data/open-platform-sources.json`.
 
 2. Ingestion jobs
@@ -26,7 +26,7 @@ Use a content pipeline instead of direct front-end scraping:
 
 4. Review
    - Check copyright, attribution, content quality, duration, audio clarity, and transcript accuracy.
-   - Reject content that cannot be legally recorded, mirrored, or displayed.
+   - Reject content that cannot be legally linked, mirrored, or displayed.
 
 5. Monthly manifest
    - Write approved resources into `data/content-library.json`.
@@ -39,13 +39,12 @@ Use a content pipeline instead of direct front-end scraping:
 
 ## Why Not Direct YouTube Downloading
 
-YouTube embeds and many news videos are not suitable for this recording model because:
+YouTube embeds and many news videos are not suitable as mirrored local media because:
 
-- Browser canvas recording cannot reliably include cross-origin iframe video.
 - Downloading or mirroring platform videos can violate platform terms or copyright.
 - Subtitles, translations, and derivative vocabulary explanations need editorial QA.
 
-The safer path is to use licensed media, direct open media files, partner APIs, self-produced videos, or public-domain sources.
+The current product avoids local video recording and sends English practice to an external shadowing site. If local media is ever added again, the safer path is licensed media, direct open media files, partner APIs, self-produced videos, or public-domain sources.
 
 ## Manifest Requirements
 

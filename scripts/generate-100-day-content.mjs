@@ -289,7 +289,7 @@ function buildDemoVideo(title, label, mediaUrl) {
   return {
     title,
     label,
-    source: "Open media sample video for local recording compatibility",
+    source: "Open media sample video",
     license: "demo-open-media",
     mediaUrl,
     durationSeconds: 16,

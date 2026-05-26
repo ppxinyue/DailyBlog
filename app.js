@@ -10,18 +10,12 @@ let codingProblems = [];
 let activeProblemIndex = 0;
 let hintIndex = 1;
 let todoState = loadTodoState();
-let mediaStream = null;
-let mediaRecorder = null;
-let recordedChunks = [];
-let drawTimer = null;
-let recordings = [];
-let db = null;
 
 const defaultReading = {
   title: "每日一文",
   paragraphs: [
-    "今天的中文阅读建议跳转到“每日一文”完成。读完之后回到这里，用朗读录制记录一次完整表达。",
-    "录制只用于中文朗读；英语跟读直接在外部专业站点完成。",
+    "今天的中文阅读建议跳转到“每日一文”完成。读完之后回到这里勾选中文阅读任务。",
+    "本站不再提供任何朗读录制功能，只保留每日任务和学习资源入口。",
   ],
 };
 
@@ -30,7 +24,6 @@ init();
 async function init() {
   contentLibrary = await loadJson("./data/content-library.json", buildFallbackContentLibrary());
   insightLibrary = await loadJson("./data/insights.json", { days: {} });
-  recordings = await loadRecordings();
   setLessonsForDate(selectedDate);
   bindEvents();
   renderAll();
@@ -67,12 +60,6 @@ function bindEvents() {
     hintIndex += 1;
     renderHints();
   });
-  $("#openReadingStudio").addEventListener("click", openReadingStudio);
-  $("#closeStudio").addEventListener("click", closeStudio);
-  $("#enableCamera").addEventListener("click", enableCamera);
-  $("#startRecording").addEventListener("click", startRecording);
-  $("#stopRecording").addEventListener("click", stopRecording);
-  $("#clearRecordings").addEventListener("click", clearRecordings);
 }
 
 function renderAll() {
@@ -84,7 +71,6 @@ function renderAll() {
   renderReading();
   renderCoding();
   renderInsights();
-  renderRecordings();
 }
 
 function renderStats() {
@@ -228,198 +214,6 @@ function formatAnalysis(result) {
   return lines.join("\n");
 }
 
-function openReadingStudio() {
-  $("#studio").classList.add("open");
-  $("#studio").setAttribute("aria-hidden", "false");
-  $("#studioTitle").textContent = getReadingForDate(selectedDate).title;
-  startCanvasLoop();
-}
-
-function closeStudio() {
-  if (mediaRecorder?.state === "recording") mediaRecorder.stop();
-  $("#studio").classList.remove("open");
-  $("#studio").setAttribute("aria-hidden", "true");
-  stopCamera();
-  stopCanvasLoop();
-}
-
-async function enableCamera() {
-  mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-  $("#cameraVideo").srcObject = mediaStream;
-  await $("#cameraVideo").play();
-  $("#cameraHint").hidden = true;
-  $("#startRecording").disabled = false;
-}
-
-function startRecording() {
-  if (!mediaStream) return;
-  recordedChunks = [];
-  const stream = $("#compositeCanvas").captureStream(30);
-  mediaStream.getAudioTracks().forEach((track) => stream.addTrack(track));
-  mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-  mediaRecorder.ondataavailable = (event) => {
-    if (event.data.size) recordedChunks.push(event.data);
-  };
-  mediaRecorder.onstop = saveRecording;
-  mediaRecorder.start();
-  $("#startRecording").disabled = true;
-  $("#stopRecording").disabled = false;
-}
-
-function stopRecording() {
-  if (mediaRecorder?.state === "recording") mediaRecorder.stop();
-  $("#startRecording").disabled = false;
-  $("#stopRecording").disabled = true;
-  setTaskDone("chinese", true);
-  renderStats();
-}
-
-async function saveRecording() {
-  const blob = new Blob(recordedChunks, { type: "video/webm" });
-  const item = {
-    id: crypto.randomUUID(),
-    title: getReadingForDate(selectedDate).title,
-    createdAt: new Date(),
-    size: blob.size,
-    blob,
-    url: URL.createObjectURL(blob),
-  };
-  recordings.unshift(item);
-  await persistRecording(item);
-  renderRecordings();
-}
-
-function startCanvasLoop() {
-  const canvas = $("#compositeCanvas");
-  const ctx = canvas.getContext("2d");
-  const draw = () => {
-    ctx.fillStyle = "#f8fafc";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const video = $("#cameraVideo");
-    if (video.videoWidth) drawContain(ctx, video, 0, 0, canvas.width, Math.floor(canvas.height * 0.56));
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(70, canvas.height * 0.6, canvas.width - 140, canvas.height * 0.3);
-    ctx.fillStyle = "#1f2937";
-    ctx.font = "700 46px sans-serif";
-    ctx.textAlign = "left";
-    wrapCanvasText(getReadingForDate(selectedDate).paragraphs.join(" "), 110, canvas.height * 0.66, canvas.width - 220, 64, 7);
-    drawTimer = requestAnimationFrame(draw);
-  };
-  draw();
-}
-
-function stopCanvasLoop() {
-  if (drawTimer) cancelAnimationFrame(drawTimer);
-  drawTimer = null;
-}
-
-function drawContain(ctx, video, x, y, width, height) {
-  const scale = Math.min(width / video.videoWidth, height / video.videoHeight);
-  const drawWidth = video.videoWidth * scale;
-  const drawHeight = video.videoHeight * scale;
-  ctx.fillStyle = "#0f172a";
-  ctx.fillRect(x, y, width, height);
-  ctx.drawImage(video, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
-}
-
-function wrapCanvasText(text, x, y, maxWidth, lineHeight, maxLines) {
-  const words = text.split("");
-  let line = "";
-  let lines = 0;
-  for (const word of words) {
-    const next = line + word;
-    if ($("#compositeCanvas").getContext("2d").measureText(next).width > maxWidth && line) {
-      $("#compositeCanvas").getContext("2d").fillText(line, x, y);
-      y += lineHeight;
-      line = word;
-      lines += 1;
-      if (lines >= maxLines) return;
-    } else {
-      line = next;
-    }
-  }
-  $("#compositeCanvas").getContext("2d").fillText(line, x, y);
-}
-
-function stopCamera() {
-  mediaStream?.getTracks().forEach((track) => track.stop());
-  mediaStream = null;
-  $("#cameraVideo").srcObject = null;
-  $("#cameraHint").hidden = false;
-  $("#startRecording").disabled = true;
-  $("#stopRecording").disabled = true;
-}
-
-function renderRecordings() {
-  const list = $("#recordingList");
-  if (!recordings.length) {
-    list.className = "recording-list empty";
-    list.textContent = "暂无录制";
-    return;
-  }
-  list.className = "recording-list";
-  list.innerHTML = recordings
-    .map((item) => `
-      <article class="recording-item">
-        <video src="${item.url}" controls></video>
-        <div>
-          <h3>${item.title}</h3>
-          <p>${item.createdAt.toLocaleString()} · ${formatSize(item.size)}</p>
-          <a class="button-link" href="${item.url}" download="${item.title}.webm">下载</a>
-          <button class="danger ghost delete-recording" data-id="${item.id}">删除</button>
-        </div>
-      </article>
-    `)
-    .join("");
-  $$(".delete-recording").forEach((button) => button.addEventListener("click", () => deleteRecording(button.dataset.id)));
-}
-
-async function openDb() {
-  if (db) return db;
-  db = await new Promise((resolve, reject) => {
-    const request = indexedDB.open("mimic-recordings", 1);
-    request.onupgradeneeded = () => request.result.createObjectStore("recordings", { keyPath: "id" });
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-  return db;
-}
-
-async function loadRecordings() {
-  const database = await openDb();
-  const items = await new Promise((resolve, reject) => {
-    const request = database.transaction("recordings", "readonly").objectStore("recordings").getAll();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-  return items.map((item) => ({ ...item, createdAt: new Date(item.createdAt), url: URL.createObjectURL(item.blob) })).reverse();
-}
-
-async function persistRecording(item) {
-  const database = await openDb();
-  database.transaction("recordings", "readwrite").objectStore("recordings").put({
-    id: item.id,
-    title: item.title,
-    createdAt: item.createdAt.toISOString(),
-    size: item.size,
-    blob: item.blob,
-  });
-}
-
-async function deleteRecording(id) {
-  recordings = recordings.filter((item) => item.id !== id);
-  const database = await openDb();
-  database.transaction("recordings", "readwrite").objectStore("recordings").delete(id);
-  renderRecordings();
-}
-
-async function clearRecordings() {
-  recordings = [];
-  const database = await openDb();
-  database.transaction("recordings", "readwrite").objectStore("recordings").clear();
-  renderRecordings();
-}
-
 function setLessonsForDate(date) {
   codingProblems = getCodingProblemsForDate(date);
   activeProblemIndex = 0;
@@ -520,9 +314,4 @@ function toDateKey(date) {
 
 function formatDisplayDate(date) {
   return date.toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "short" });
-}
-
-function formatSize(bytes) {
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }

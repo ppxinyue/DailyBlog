@@ -47,8 +47,9 @@
 - Verified `server.py` syntax through Python AST parsing, verified `app.js` with `node --check`, ran content and insight validators, and tested `/api/python/analyze` with invalid and valid snippets on `127.0.0.1:4174`.
 - Rebuilt the website as a Google-style daily todo dashboard with four modules, checkboxes, daily progress, streak, cumulative completion stats, and calendar completion markers.
 - Removed English video recording from the visible user flow and replaced it with a direct ShadowingEnglish practice link.
-- Added a Chinese daily reading link to 每日一文 while keeping local Chinese朗读录制 and recording library.
+- Added a Chinese daily reading link to 每日一文.
 - Added Coding resource links to LeetCode Top 100 and `rasbt/LLMs-from-scratch`, while keeping daily generated questions and local Python syntax checks.
 - Expanded Insight rendering to show detailed Chinese summaries and added children, education, mental health, accessibility, and developmental psychology coverage.
 - Updated the Daily Insight automation prompt to require `detailedSummary` and to track children, education, mental health, and AI wellbeing sources.
 - Restyled the dashboard to match the requested experimental portfolio reference: large condensed `DAILY_TODO` title, grey grid background, thick black outer frame, line-based cards, monochrome typography, and orange action accents.
+- Removed all remaining recording UI and code: Chinese recording button, recording library, camera/studio DOM, MediaRecorder flow, and recording IndexedDB access.

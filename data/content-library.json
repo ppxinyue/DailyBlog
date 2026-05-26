@@ -1057,7 +1057,7 @@
     "eng-clear-speech-001": {
       "title": "Daily English: Clear Speech Practice",
       "label": "Day 1",
-      "source": "Open media sample video for local recording compatibility",
+      "source": "Open media sample video",
       "license": "demo-open-media",
       "mediaUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
       "durationSeconds": 16,
@@ -1091,7 +1091,7 @@
     "eng-news-tone-001": {
       "title": "Daily English: News Tone Practice",
       "label": "Day 2",
-      "source": "Open media sample video for local recording compatibility",
+      "source": "Open media sample video",
       "license": "demo-open-media",
       "mediaUrl": "https://media.w3.org/2010/05/sintel/trailer.mp4",
       "durationSeconds": 16,
