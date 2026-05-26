@@ -9,21 +9,12 @@
 
 ## Current Website Plan
 
-1. Build a four-module daily todo dashboard: English shadowing, Chinese reading, Coding resources, and AI Insight.
-2. Link English practice to a dedicated high-quality shadowing site instead of hosting or recording video locally.
-3. Link Chinese reading to a high-quality daily reading site and show a local preview.
-4. Remove all local reading/video recording flows from the website.
-5. Verify the site through a local HTTP server and browser checks.
-6. Add a calendar so users can browse practice content by date.
-7. Replace cyclic demo content with a persistent monthly resource manifest.
-8. Validate monthly manifests for missing references and duplicate resources.
-9. Use the final three days of each month as the window for preparing the next month's manifest.
-10. Build a 100-day content plan with English reading and Chinese reading resources.
-11. Add a Coding module that links to NeetCode and Hello Interview.
-12. Add a daily AI-industry-centered Insight module interpreted through cognitive neuroscience, neurodiversity, developmental psychology, and social simulation, with source links, Chinese summaries, and favorites.
-13. Keep Coding completion as a manual todo checkbox only.
-14. Remove local Coding editors, Python backend checks, and sandbox plans.
-15. Restrict English and Chinese production materials to open platforms, public-domain collections, Creative Commons sources, official open media, or explicitly authorized content.
-16. Rebuild the interface as a four-module daily todo dashboard with completion checkboxes and daily statistics.
-17. Make Insight summaries more detailed and explicitly include children, education, mental health, neurodiversity, and AI industry applications.
-18. Restyle the daily todo dashboard as a monochrome line-grid interface with a bold experimental portfolio feel and orange action accents.
+1. Build a minimal four-box vertical dashboard: English shadowing, Chinese reading, Coding resources, and AI Insight.
+2. Each box contains only a title, one or more resource links, and a daily learning reflection input.
+3. Save daily reflection inputs locally in the browser by date and module.
+4. Link English practice to ShadowingEnglish.
+5. Link Chinese reading to 每日一文.
+6. Link Coding to NeetCode and Hello Interview.
+7. Link Insight to the local daily Insight resource file.
+8. Remove local video/audio recording, calendar UI, completion stats, coding editors, Python backend checks, and expanded in-page Insight cards from the visible website.
+9. Keep the visual style minimal with line-box cards and readable text.

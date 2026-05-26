@@ -7,110 +7,32 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">Mimic Lab / Daily system</p>
-        <h1>DAILY_TODO</h1>
-        <p class="hero-copy">每日四项：英语、中文、Coding、Insight。</p>
-      </div>
-      <div class="date-card">
-        <span id="todayLabel"></span>
-        <strong id="completedCount">0/4</strong>
-        <small>今日完成</small>
-      </div>
-    </header>
-
-    <main>
-      <section class="overview">
-        <div>
-          <p class="eyebrow">Selected day</p>
-          <h2 id="selectedDateLabel"></h2>
-        </div>
-        <div class="stats-grid" aria-label="每日统计">
-          <div>
-            <strong id="streakCount">0</strong>
-            <span>连续天数</span>
-          </div>
-          <div>
-            <strong id="totalDone">0</strong>
-            <span>累计完成项</span>
-          </div>
-          <div>
-            <strong id="completionRate">0%</strong>
-            <span>今日进度</span>
-          </div>
-        </div>
-        <div class="progress-track" aria-hidden="true">
-          <div id="todoProgressBar"></div>
-        </div>
+    <main class="todo-grid" aria-label="每日任务">
+      <section class="todo-card">
+        <h1>英文跟读</h1>
+        <a href="https://shadowingenglish.com/practice" target="_blank" rel="noreferrer">ShadowingEnglish</a>
+        <textarea data-note="english" placeholder="每日学习感受"></textarea>
       </section>
 
-      <section class="calendar-panel" aria-label="练习日历">
-        <div class="calendar-head">
-          <button id="prevMonth" class="icon-button light" aria-label="上个月">‹</button>
-          <h2 id="calendarTitle"></h2>
-          <button id="nextMonth" class="icon-button light" aria-label="下个月">›</button>
-        </div>
-        <div class="weekday-row" aria-hidden="true">
-          <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
-        </div>
-        <div id="calendarGrid" class="calendar-grid"></div>
+      <section class="todo-card">
+        <h1>中文阅读</h1>
+        <a href="https://meiriyiwen.com/" target="_blank" rel="noreferrer">每日一文</a>
+        <textarea data-note="chinese" placeholder="每日学习感受"></textarea>
       </section>
 
-      <section class="todo-grid" aria-label="每日任务">
-        <article class="todo-card accent-blue" data-card="english">
-          <label class="todo-check">
-            <input type="checkbox" data-task="english" />
-            <span></span>
-          </label>
-          <div class="todo-content">
-            <p class="eyebrow">English shadowing</p>
-            <h2>英语视频跟读</h2>
-            <a id="englishLink" class="button-link" href="https://shadowingenglish.com/practice" target="_blank" rel="noreferrer">打开 ShadowingEnglish</a>
-          </div>
-        </article>
+      <section class="todo-card">
+        <h1>Coding</h1>
+        <div class="link-row">
+          <a href="https://neetcode.io/roadmap" target="_blank" rel="noreferrer">NeetCode</a>
+          <a href="https://www.hellointerview.com/practice" target="_blank" rel="noreferrer">Hello Interview</a>
+        </div>
+        <textarea data-note="coding" placeholder="每日学习感受"></textarea>
+      </section>
 
-        <article class="todo-card accent-green" data-card="chinese">
-          <label class="todo-check">
-            <input type="checkbox" data-task="chinese" />
-            <span></span>
-          </label>
-          <div class="todo-content">
-            <p class="eyebrow">Chinese reading</p>
-            <h2>中文每日阅读</h2>
-            <div class="button-row">
-              <a id="readingLink" class="button-link" href="https://meiriyiwen.com/" target="_blank" rel="noreferrer">打开每日一文</a>
-            </div>
-            <article id="readingText" class="reading-text compact"></article>
-          </div>
-        </article>
-
-        <article class="todo-card accent-yellow" data-card="coding">
-          <label class="todo-check">
-            <input type="checkbox" data-task="coding" />
-            <span></span>
-          </label>
-          <div class="todo-content">
-            <p class="eyebrow">Coding interview</p>
-            <h2>每日 Coding</h2>
-            <div class="resource-links">
-              <a href="https://neetcode.io/roadmap" target="_blank" rel="noreferrer">NeetCode Roadmap</a>
-              <a href="https://www.hellointerview.com/practice" target="_blank" rel="noreferrer">Hello Interview Practice</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="todo-card accent-red" data-card="insight">
-          <label class="todo-check">
-            <input type="checkbox" data-task="insight" />
-            <span></span>
-          </label>
-          <div class="todo-content">
-            <p class="eyebrow">AI industry insight</p>
-            <h2>交叉学科 Insight</h2>
-            <div id="insightList" class="insight-list"></div>
-          </div>
-        </article>
+      <section class="todo-card">
+        <h1>Insight</h1>
+        <a href="./data/insights.json" target="_blank" rel="noreferrer">今日 Insight</a>
+        <textarea data-note="insight" placeholder="每日学习感受"></textarea>
       </section>
     </main>
     <script src="./app.js"></script>
