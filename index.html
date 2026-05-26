@@ -3,156 +3,135 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mimic 英语跟读练习</title>
+    <title>Mimic Daily Todo</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="topbar">
       <div>
-        <p class="eyebrow">Daily shadowing studio</p>
-        <h1>Mimic 跟读练习</h1>
+        <p class="eyebrow">Daily learning todo</p>
+        <h1>Mimic</h1>
+        <p class="hero-copy">英语跟读、中文阅读、Coding 和 AI Insight，每天完成四件事。</p>
       </div>
-      <nav class="tabs" aria-label="练习板块">
-        <button class="tab active" data-target="english">英语视频</button>
-        <button class="tab" data-target="chinese">中文朗读</button>
-        <button class="tab" data-target="coding">Coding</button>
-        <button class="tab" data-target="insight">Insight</button>
-      </nav>
+      <div class="date-card">
+        <span id="todayLabel"></span>
+        <strong id="completedCount">0/4</strong>
+        <small>今日完成</small>
+      </div>
     </header>
 
     <main>
+      <section class="overview">
+        <div>
+          <p class="eyebrow">Selected day</p>
+          <h2 id="selectedDateLabel"></h2>
+        </div>
+        <div class="stats-grid" aria-label="每日统计">
+          <div>
+            <strong id="streakCount">0</strong>
+            <span>连续天数</span>
+          </div>
+          <div>
+            <strong id="totalDone">0</strong>
+            <span>累计完成项</span>
+          </div>
+          <div>
+            <strong id="completionRate">0%</strong>
+            <span>今日进度</span>
+          </div>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div id="todoProgressBar"></div>
+        </div>
+      </section>
+
       <section class="calendar-panel" aria-label="练习日历">
         <div class="calendar-head">
           <button id="prevMonth" class="icon-button light" aria-label="上个月">‹</button>
-          <div>
-            <p class="eyebrow">Practice calendar</p>
-            <h2 id="calendarTitle"></h2>
-          </div>
+          <h2 id="calendarTitle"></h2>
           <button id="nextMonth" class="icon-button light" aria-label="下个月">›</button>
         </div>
         <div class="weekday-row" aria-hidden="true">
-          <span>一</span>
-          <span>二</span>
-          <span>三</span>
-          <span>四</span>
-          <span>五</span>
-          <span>六</span>
-          <span>日</span>
+          <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
         </div>
         <div id="calendarGrid" class="calendar-grid"></div>
       </section>
 
-      <section id="english" class="panel active">
-        <div class="practice-grid">
-          <section class="video-column" aria-label="每日英语视频">
-            <div class="section-head">
-              <div>
-                <p class="eyebrow" id="englishDate"></p>
-                <h2 id="englishTitle"></h2>
-              </div>
-              <button id="openVideoStudio" class="primary">全屏跟读</button>
-            </div>
-            <video id="sourceVideo" controls playsinline crossorigin="anonymous"></video>
-            <p class="source-line" id="englishSource"></p>
-          </section>
-
-          <aside class="study-column">
-            <section>
-              <div class="section-head compact">
-                <h2>逐行字幕</h2>
-                <button id="replayLine" class="ghost">播放当前句</button>
-              </div>
-              <div id="subtitleList" class="subtitle-list"></div>
-            </section>
-
-            <section>
-              <h2>重点词</h2>
-              <div id="wordList" class="word-list"></div>
-            </section>
-          </aside>
-        </div>
-      </section>
-
-      <section id="chinese" class="panel">
-        <section class="reading-main">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow" id="readingDate"></p>
-              <h2 id="readingTitle"></h2>
-            </div>
-            <button id="openReadingStudio" class="primary">朗读录制</button>
+      <section class="todo-grid" aria-label="每日任务">
+        <article class="todo-card accent-blue" data-card="english">
+          <label class="todo-check">
+            <input type="checkbox" data-task="english" />
+            <span></span>
+          </label>
+          <div class="todo-content">
+            <p class="eyebrow">English shadowing</p>
+            <h2>英语视频跟读</h2>
+            <p class="card-copy">跳转到专业跟读站点，选择 3-5 分钟视频，按句听、暂停、复述。</p>
+            <a id="englishLink" class="button-link" href="https://shadowingenglish.com/practice" target="_blank" rel="noreferrer">打开 ShadowingEnglish</a>
+            <div class="source-note">推荐：ShadowingEnglish，支持 YouTube 视频逐句 shadowing、按等级练习和移动端练习。</div>
           </div>
-          <article id="readingText" class="reading-text"></article>
-        </section>
-      </section>
+        </article>
 
-      <section id="coding" class="panel">
-        <div class="coding-layout">
-          <section class="coding-main">
-            <div class="section-head">
-              <div>
-                <p class="eyebrow" id="codingDate"></p>
-                <h2 id="codingTitle"></h2>
-              </div>
-              <a id="codingSource" class="button-link" href="#" target="_blank" rel="noreferrer">打开题目</a>
+        <article class="todo-card accent-green" data-card="chinese">
+          <label class="todo-check">
+            <input type="checkbox" data-task="chinese" />
+            <span></span>
+          </label>
+          <div class="todo-content">
+            <p class="eyebrow">Chinese reading</p>
+            <h2>中文每日阅读</h2>
+            <p class="card-copy">阅读每日一文，再用本地录制功能练习朗读表达。</p>
+            <div class="button-row">
+              <a id="readingLink" class="button-link" href="https://meiriyiwen.com/" target="_blank" rel="noreferrer">打开每日一文</a>
+              <button id="openReadingStudio" class="secondary">朗读录制</button>
+            </div>
+            <article id="readingText" class="reading-text compact"></article>
+          </div>
+        </article>
+
+        <article class="todo-card accent-yellow" data-card="coding">
+          <label class="todo-check">
+            <input type="checkbox" data-task="coding" />
+            <span></span>
+          </label>
+          <div class="todo-content">
+            <p class="eyebrow">Python coding</p>
+            <h2 id="codingTitle">每日 Coding</h2>
+            <div class="resource-links">
+              <a href="https://leetcode.com/studyplan/top-100-liked/" target="_blank" rel="noreferrer">LeetCode Top 100</a>
+              <a href="https://github.com/rasbt/LLMs-from-scratch" target="_blank" rel="noreferrer">LLMs from scratch</a>
             </div>
             <div id="problemList" class="problem-list"></div>
             <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
-            <div class="studio-controls coding-controls">
+            <div class="button-row">
               <button id="checkSyntax" class="secondary">语法检查</button>
               <button id="submitCode" class="primary">提交判定</button>
               <button id="nextHint" class="ghost">下一步提示</button>
             </div>
+            <div id="hintList" class="hint-list"></div>
             <div id="judgeOutput" class="judge-output"></div>
-          </section>
+          </div>
+        </article>
 
-          <aside class="study-column">
-            <section>
-              <h2>API Key</h2>
-              <p class="source-line">可选。当前先做本地语法和结构检查；接入后端或模型后可用于更细的错误解析。</p>
-              <input id="apiKeyInput" class="api-key-input" type="password" placeholder="sk-..." autocomplete="off" />
-            </section>
-            <section>
-              <h2>动态提示</h2>
-              <div id="hintList" class="hint-list"></div>
-            </section>
-            <section>
-              <div class="section-head compact">
-                <h2>错题本</h2>
-                <button id="clearWrongBook" class="danger ghost">清空</button>
-              </div>
-              <div id="wrongBookList" class="favorite-list empty">暂无错题</div>
-            </section>
-          </aside>
-        </div>
-      </section>
-
-      <section id="insight" class="panel">
-        <div class="insight-layout">
-          <section class="insight-main">
-            <div class="section-head">
-              <div>
-                <p class="eyebrow" id="insightDate"></p>
-                <h2>交叉学科 Insight</h2>
-              </div>
-            </div>
+        <article class="todo-card accent-red" data-card="insight">
+          <label class="todo-check">
+            <input type="checkbox" data-task="insight" />
+            <span></span>
+          </label>
+          <div class="todo-content">
+            <p class="eyebrow">AI industry insight</p>
+            <h2>交叉学科 Insight</h2>
+            <p class="card-copy">AI 行业动态，重点连接认知神经科学、儿童与教育、心理健康、neurodiversity 和 social simulation。</p>
             <div id="insightList" class="insight-list"></div>
-          </section>
-
-          <aside class="study-column">
-            <section>
-              <h2>我的收藏</h2>
-              <div id="favoriteInsightList" class="favorite-list empty">暂无收藏</div>
-            </section>
-          </aside>
-        </div>
+          </div>
+        </article>
       </section>
 
       <section class="library">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Recordings</p>
-            <h2>我的录制</h2>
+            <p class="eyebrow">Reading recordings</p>
+            <h2>中文朗读录制</h2>
           </div>
           <button id="clearRecordings" class="danger ghost">全部删除</button>
         </div>
@@ -164,8 +143,8 @@
       <div class="studio-shell">
         <div class="studio-bar">
           <div>
-            <p class="eyebrow" id="studioMode">Video shadowing</p>
-            <h2 id="studioTitle"></h2>
+            <p class="eyebrow">Chinese reading</p>
+            <h2 id="studioTitle">中文朗读</h2>
           </div>
           <button id="closeStudio" class="icon-button" aria-label="关闭">×</button>
         </div>

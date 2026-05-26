@@ -17,3 +17,6 @@
 - Insight selection should avoid drifting into general neuroscience; AI industry relevance is the primary filter.
 - Coding mistake stats are currently browser-local via `localStorage`; cross-device sync requires a user account or backend storage.
 - Existing English and Chinese seed reading entries are not yet all replaced with open-platform source URLs; production release should ingest from `data/open-platform-sources.json` and preserve item-level attribution/license metadata.
+- English practice now depends on the availability and UX of the external ShadowingEnglish site.
+- Chinese daily reading now depends on the availability and editorial choices of 每日一文.
+- Daily todo completion stats are browser-local via `localStorage`; cross-device or multi-browser sync still requires backend storage.

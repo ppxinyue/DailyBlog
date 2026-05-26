@@ -27,3 +27,7 @@
 16. Add Coding mistake tracking with per-problem submit/error counts and a local wrong-answer notebook.
 17. Move Coding syntax analysis to a local Python backend before adding sandboxed execution.
 18. Restrict English and Chinese production materials to open platforms, public-domain collections, Creative Commons sources, official open media, or explicitly authorized content.
+19. Rebuild the interface as a four-module daily todo dashboard with completion checkboxes and daily statistics.
+20. Remove English recording from the product flow and link English practice to a dedicated high-quality shadowing site.
+21. Link Chinese reading to a high-quality daily reading site while keeping local Chinese reading recording.
+22. Make Insight summaries more detailed and explicitly include children, education, mental health, neurodiversity, and AI industry applications.

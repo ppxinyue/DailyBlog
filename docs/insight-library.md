@@ -11,8 +11,9 @@ The Insight module gives an AI-industry-centered daily view for a cognitive neur
 - Do not repeat links across days.
 - Include original URL, source name, publication date, Chinese summary, and why it matters for the user's AI + mind/brain/social-science background.
 - Prefer AI industry and applied research first: Microsoft Research Asia AI and Brain, Microsoft Research AI & Society / Societal AI, OpenAI, Anthropic, Google DeepMind, Meta AI, Apple ML, NVIDIA, top internet/AI company research blogs, Kaggle, GitHub, and production agent/evaluation projects.
-- Interpret selected items through one or more of these lenses: cognitive neuroscience, neurodiversity, developmental psychology, social simulation.
-- Good items include industry agent evaluation work, AI accessibility for neurodiverse users, child/developmental learning products, synthetic society / generative-agent simulations, human-vs-LLM social or moral behavior gaps, and business cases where human cognitive habits affect agent design.
+- Interpret selected items through one or more of these lenses: cognitive neuroscience, neurodiversity, developmental psychology, children, education, mental health, and social simulation.
+- Good items include industry agent evaluation work, AI accessibility for neurodiverse users, child/developmental learning products, education copilots, mental health support boundaries, synthetic society / generative-agent simulations, human-vs-LLM social or moral behavior gaps, and business cases where human cognitive habits affect agent design.
+- Each item should include a concise `zhSummary` and a more substantive `detailedSummary` that explains product, evaluation, or applied-research implications.
 - Avoid items that are only neuroscience papers with no plausible AI-industry relevance.
 
 ## Data Shape
