@@ -64,6 +64,31 @@ a {
   gap: 18px;
 }
 
+.insight-subtitle,
+.channel-list {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.insight-subtitle {
+  margin: 0;
+}
+
+.channel-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.channel-list span {
+  font-weight: 900;
+}
+
+.channel-list a {
+  font-size: 13px;
+  font-weight: 700;
+}
+
 textarea {
   background: transparent;
   border: 2px solid var(--line);

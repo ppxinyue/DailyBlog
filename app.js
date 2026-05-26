@@ -22,6 +22,7 @@ async function renderInsights() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const library = await response.json();
     const items = library.days?.[todayKey] || [];
+    renderInsightChannels(library.watchlist || []);
 
     if (!items.length) {
       list.textContent = "今日暂无 Insight";
@@ -38,6 +39,15 @@ async function renderInsights() {
   } catch {
     list.innerHTML = `<a href="./data/insights.json" target="_blank" rel="noreferrer">今日 Insight</a>`;
   }
+}
+
+function renderInsightChannels(channels) {
+  const target = document.querySelector("#insightChannels");
+  if (!target) return;
+  target.innerHTML = `
+    <span>检索渠道：</span>
+    ${channels.map((channel) => `<a href="${channel.url}" target="_blank" rel="noreferrer">${channel.name}</a>`).join("")}
+  `;
 }
 
 function renderInsightItem(item) {
