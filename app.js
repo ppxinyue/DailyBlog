@@ -150,9 +150,12 @@ const ctx = canvas.getContext("2d");
 let selectedDate = today;
 let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 let contentLibrary = null;
+let insightLibrary = null;
 let englishLesson = createMissingEnglishLesson(selectedDate);
 let readingLesson = createMissingReadingLesson(selectedDate);
 let codingProblems = [];
+let insightItems = [];
+let favoriteInsights = loadFavoriteInsights();
 let activeSubtitle = 0;
 let activeProblemIndex = 0;
 let hintIndex = 0;
@@ -166,6 +169,7 @@ let db = null;
 
 async function init() {
   contentLibrary = await loadContentLibrary();
+  insightLibrary = await loadInsightLibrary();
   setLessonsForDate(selectedDate);
   bindTabs();
   bindCalendar();
@@ -173,6 +177,7 @@ async function init() {
   renderEnglishLesson();
   renderReadingLesson();
   renderCodingLesson();
+  renderInsights();
   bindStudio();
   bindCoding();
   db = await openRecordingsDb();
@@ -238,6 +243,7 @@ function selectDate(date) {
   renderEnglishLesson();
   renderReadingLesson();
   renderCodingLesson();
+  renderInsights();
 }
 
 function bindTabs() {
@@ -364,6 +370,74 @@ function renderHints() {
   const problem = codingProblems[activeProblemIndex] || createMissingCodingProblem(selectedDate);
   const visibleHints = problem.hints.slice(0, Math.max(1, hintIndex));
   $("#hintList").innerHTML = visibleHints.map((hint, index) => `<div class="hint-item">${index + 1}. ${hint}</div>`).join("");
+}
+
+function renderInsights() {
+  $("#insightDate").textContent = `${formatDisplayDate(selectedDate)} · ${insightItems.length} 条`;
+  const list = $("#insightList");
+  if (!insightItems.length) {
+    list.className = "insight-list empty";
+    list.textContent = "该日期暂无 Insight。每日 0 点更新后会显示最新资讯。";
+  } else {
+    list.className = "insight-list";
+    list.innerHTML = insightItems.map(renderInsightCard).join("");
+  }
+  document.querySelectorAll(".favorite-insight").forEach((button) => {
+    button.addEventListener("click", () => toggleFavoriteInsight(button.dataset.id));
+  });
+  renderFavoriteInsights();
+}
+
+function renderInsightCard(item) {
+  const saved = favoriteInsights.includes(item.id);
+  return `
+    <article class="insight-card">
+      <div class="insight-card-head">
+        <div>
+          <p class="eyebrow">${item.sourceType} · ${item.publishedAt}</p>
+          <h2>${item.title}</h2>
+        </div>
+        <button class="ghost favorite-insight" data-id="${item.id}">${saved ? "已收藏" : "收藏"}</button>
+      </div>
+      <p class="source-line">${item.sourceName}</p>
+      <p>${item.zhSummary}</p>
+      <p><strong>为什么重要：</strong>${item.whyItMatters}</p>
+      <div class="tag-row">${item.tags.map((tag) => `<span>${tag}</span>`).join("")}</div>
+      <a class="button-link" href="${item.url}" target="_blank" rel="noreferrer">原链接</a>
+    </article>
+  `;
+}
+
+function renderFavoriteInsights() {
+  const favoriteItems = Object.values(insightLibrary?.days || {})
+    .flat()
+    .filter((item) => favoriteInsights.includes(item.id));
+  const list = $("#favoriteInsightList");
+  if (!favoriteItems.length) {
+    list.className = "favorite-list empty";
+    list.textContent = "暂无收藏";
+    return;
+  }
+  list.className = "favorite-list";
+  list.innerHTML = favoriteItems
+    .map((item) => `<a href="${item.url}" target="_blank" rel="noreferrer">${item.title}</a>`)
+    .join("");
+}
+
+function toggleFavoriteInsight(id) {
+  favoriteInsights = favoriteInsights.includes(id)
+    ? favoriteInsights.filter((itemId) => itemId !== id)
+    : [...favoriteInsights, id];
+  localStorage.setItem("mimic-favorite-insights", JSON.stringify(favoriteInsights));
+  renderInsights();
+}
+
+function loadFavoriteInsights() {
+  try {
+    return JSON.parse(localStorage.getItem("mimic-favorite-insights") || "[]");
+  } catch (error) {
+    return [];
+  }
 }
 
 function syncSubtitle() {
@@ -736,11 +810,27 @@ async function loadContentLibrary() {
   }
 }
 
+async function loadInsightLibrary() {
+  try {
+    const response = await fetch("./data/insights.json", { cache: "no-cache" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    return { days: {} };
+  }
+}
+
 function setLessonsForDate(date) {
   englishLesson = getEnglishLessonForDate(date);
   readingLesson = getReadingLessonForDate(date);
   codingProblems = getCodingProblemsForDate(date);
+  insightItems = getInsightsForDate(date);
   activeProblemIndex = 0;
+}
+
+function getInsightsForDate(date) {
+  const dateKey = toDateKey(date);
+  return insightLibrary?.days?.[dateKey] || [];
 }
 
 function getEnglishLessonForDate(date) {

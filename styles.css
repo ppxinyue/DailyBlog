@@ -123,7 +123,8 @@ main {
 }
 
 .practice-grid,
-.coding-layout {
+.coding-layout,
+.insight-layout {
   display: grid;
   gap: 18px;
   grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
@@ -133,6 +134,7 @@ main {
 .study-column,
 .reading-main,
 .coding-main,
+.insight-main,
 .library {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -143,6 +145,7 @@ main {
 .video-column,
 .reading-main,
 .coding-main,
+.insight-main,
 .library {
   padding: 18px;
 }
@@ -353,6 +356,64 @@ main {
 
 .reading-text p + p {
   margin-top: 16px;
+}
+
+.insight-list {
+  display: grid;
+  gap: 14px;
+}
+
+.insight-list.empty,
+.favorite-list.empty {
+  color: var(--muted);
+}
+
+.insight-card {
+  background: var(--surface-2);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.insight-card-head {
+  align-items: start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.insight-card p {
+  line-height: 1.65;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-row span {
+  background: #dfeaf1;
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 9px;
+}
+
+.favorite-list {
+  display: grid;
+  gap: 10px;
+}
+
+.favorite-list a {
+  background: var(--surface-2);
+  border-radius: 8px;
+  color: var(--text);
+  display: block;
+  padding: 10px;
+  text-decoration: none;
 }
 
 .library {
@@ -603,6 +664,7 @@ main {
 
   .practice-grid,
   .coding-layout,
+  .insight-layout,
   .recording-item {
     grid-template-columns: 1fr;
   }

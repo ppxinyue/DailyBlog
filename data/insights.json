@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "generatedAt": "2026-05-26T00:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "updatePolicy": {
+    "dailyRefreshTime": "00:00",
+    "maxAgeDays": 92,
+    "dedupeScope": "all-time-url"
+  },
+  "watchlist": [
+    {
+      "name": "Microsoft Research Asia AI and Brain",
+      "url": "https://www.microsoft.com/en-us/research/lab/microsoft-research-asia/"
+    },
+    {
+      "name": "Microsoft Research AI & Society / Societal AI",
+      "url": "https://www.microsoft.com/en-us/research/research-area/artificial-intelligence/"
+    },
+    {
+      "name": "Kaggle Competitions",
+      "url": "https://www.kaggle.com/competitions"
+    },
+    {
+      "name": "GitHub Trending / AI repositories",
+      "url": "https://github.com/trending"
+    }
+  ],
+  "days": {
+    "2026-05-26": [
+      {
+        "id": "insight-20260526-001",
+        "title": "Cognitive and artificial intelligence evaluation framework",
+        "sourceName": "Artificial Intelligence Review / Springer Nature",
+        "sourceType": "paper",
+        "publishedAt": "2026-02-26",
+        "url": "https://link.springer.com/article/10.1007/s10462-026-11493-x",
+        "tags": ["cognitive-neuroscience", "ai-evaluation", "cognitive-architecture"],
+        "zhSummary": "这篇综述尝试整合认知科学、心理学、神经科学和人工智能的评估框架，讨论如何评价智能系统的认知能力。",
+        "whyItMatters": "对 agent 评测有直接启发：业务场景不只需要看任务成功率，还可以把感知、注意、记忆、计划、推理、适应和解释能力拆成可测维度。"
+      },
+      {
+        "id": "insight-20260526-002",
+        "title": "Seemingly Conscious AI Risks",
+        "sourceName": "SSRN / Microsoft AI",
+        "sourceType": "paper",
+        "publishedAt": "2026-04-16",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6588659",
+        "tags": ["microsoft-ai", "social-ai", "consciousness-attribution"],
+        "zhSummary": "Microsoft AI 相关作者讨论“看似有意识的 AI”如何触发用户的意识归因，并将风险分为个体层面的依赖、自主性侵蚀和社会层面的地位、政治冲突等。",
+        "whyItMatters": "这贴近你关心的 social / moral 问题：LLM 是否真的有意识不是唯一重点，用户如何把它当成有意识对象，会直接影响产品设计、伦理边界和评测指标。"
+      },
+      {
+        "id": "insight-20260526-003",
+        "title": "PRISM podcast: Megan Peters on metacognition, neuroscience, and tests for AI consciousness",
+        "sourceName": "PRISM",
+        "sourceType": "frontier-idea",
+        "publishedAt": "2026-05-15",
+        "url": "https://www.prism-global.com/",
+        "tags": ["metacognition", "ai-consciousness", "neuroscience"],
+        "zhSummary": "PRISM 近期围绕 AI consciousness、metacognition 和神经科学测试组织系列讨论，关注如何把意识、元认知和社会准备纳入 AI 风险议题。",
+        "whyItMatters": "这类讨论适合作为前沿理念监测：它把 neuroscience 的测量问题和 AI 产品可能引发的社会归因问题连接起来，能启发 agent 的自我报告、信心估计和人类信任评测。"
+      },
+      {
+        "id": "insight-20260526-004",
+        "title": "ARC Prize 2026",
+        "sourceName": "ARC Prize / Kaggle",
+        "sourceType": "competition",
+        "publishedAt": "2026-03-25",
+        "url": "https://arcprize.org/competitions/2026",
+        "tags": ["kaggle", "reasoning", "agi-evaluation"],
+        "zhSummary": "ARC Prize 2026 将抽象推理任务继续放到竞赛环境中，强调少样本、组合泛化和人类式推理能力。",
+        "whyItMatters": "对 agent 评测有启发：业务场景里很多任务不是知识检索，而是少样本规则发现。ARC 类任务可作为设计认知型评测的参考。"
+      },
+      {
+        "id": "insight-20260526-005",
+        "title": "OSSInsight AI trending repositories",
+        "sourceName": "OSSInsight / GitHub",
+        "sourceType": "github-trend",
+        "publishedAt": "2026-05-23",
+        "url": "https://ossinsight.io/collections/ai/",
+        "tags": ["github", "open-source", "industry-signal"],
+        "zhSummary": "OSSInsight 的 AI 集合追踪 GitHub 上 AI 相关项目热度，可作为观察业界工具链迁移、agent 框架和开源生态变化的入口。",
+        "whyItMatters": "学术论文之外，GitHub 热度能反映落地端正在采用什么框架。对你做业务场景 agent 评测，开源项目的 issue、benchmark 和示例任务很有参考价值。"
+      }
+    ]
+  }
+}

@@ -13,3 +13,4 @@
 - The refresh job is currently represented by manifest policy and validation scripts; production ingestion still needs approved source connectors and storage.
 - The Coding module currently performs browser-side prechecks only. Real accepted/wrong-answer/runtime-error judging requires a server-side Python sandbox and test harness.
 - LLM hand-coding drills are original prompts and starter signatures; production-quality tests still need a backend sandbox and reviewed expected outputs.
+- The Insight module has curated seed data and a validation script; fully automated retrieval still depends on a scheduled job with web access and source review.

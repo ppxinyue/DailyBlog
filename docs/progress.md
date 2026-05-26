@@ -33,3 +33,7 @@
 - Added a Coding tab with daily problem cards, Python starter code, local syntax/structure checks, submit precheck, API key placeholder, and progressive hints.
 - Added `docs/leetcode-100-day-plan.md` documenting source references, plan shape, and judge boundaries.
 - Updated the 100-day generator so each day defaults to 2 LeetCode problems plus 1 LLM hand-coding drill such as softmax, LayerNorm, attention, KV cache, decoding, retrieval metrics, LoRA, quantization, and AdamW.
+- Added `data/insights.json` with daily cognitive neuroscience + AI insight seed items.
+- Added an Insight tab with source links, Chinese summaries, why-it-matters notes, tags, and local favorite storage.
+- Added `scripts/check-insights.mjs` to validate insight freshness, metadata completeness, and URL deduplication.
+- Added `docs/insight-library.md` documenting the daily 00:00 update workflow and source-selection rules.
