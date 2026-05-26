@@ -9,5 +9,7 @@
 - Full camera recording requires browser permission and should be tested on `localhost` or `127.0.0.1`, not by opening the HTML file directly.
 - Camera preview now preserves aspect ratio, which can create black bars when the camera aspect ratio does not match the iPhone-like recording area.
 - The calendar no longer cycles demo lessons silently; dates without approved manifest entries show a pending state.
-- The current manifest is still a demo seed with only 2/31 assigned days for 2026-05 and 0/30 assigned days for 2026-06.
+- The current 100-day manifest starts on 2026-05-26, so 2026-05 and 2026-09 are intentionally partial months.
 - The refresh job is currently represented by manifest policy and validation scripts; production ingestion still needs approved source connectors and storage.
+- The Coding module currently performs browser-side prechecks only. Real accepted/wrong-answer/runtime-error judging requires a server-side Python sandbox and test harness.
+- Daily drill problems are original same-pattern exercises paired with Hot 100 anchors; official LeetCode problem statements are linked, not copied into the repository.

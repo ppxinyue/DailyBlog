@@ -21,3 +21,5 @@
 10. Replace cyclic demo content with a persistent monthly resource manifest.
 11. Validate monthly manifests for missing references and duplicate resources.
 12. Use the final three days of each month as the window for preparing the next month's manifest.
+13. Build a 100-day content plan with English reading, Chinese reading, and Python coding.
+14. Add a Coding module with daily same-topic problem sets, local syntax checks, submit prechecks, and progressive hints.

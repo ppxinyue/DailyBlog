@@ -152,7 +152,10 @@ let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 let contentLibrary = null;
 let englishLesson = createMissingEnglishLesson(selectedDate);
 let readingLesson = createMissingReadingLesson(selectedDate);
+let codingProblems = [];
 let activeSubtitle = 0;
+let activeProblemIndex = 0;
+let hintIndex = 0;
 let studioType = "video";
 let cameraStream = null;
 let mediaRecorder = null;
@@ -169,7 +172,9 @@ async function init() {
   renderCalendar();
   renderEnglishLesson();
   renderReadingLesson();
+  renderCodingLesson();
   bindStudio();
+  bindCoding();
   db = await openRecordingsDb();
   recordings = await loadRecordings();
   renderRecordings();
@@ -232,6 +237,7 @@ function selectDate(date) {
   renderCalendar();
   renderEnglishLesson();
   renderReadingLesson();
+  renderCodingLesson();
 }
 
 function bindTabs() {
@@ -300,6 +306,64 @@ function renderReadingLesson() {
   $("#readingText").innerHTML = readingLesson.paragraphs
     .map((paragraph) => `<p>${paragraph}</p>`)
     .join("");
+}
+
+function renderCodingLesson() {
+  const activeProblem = codingProblems[activeProblemIndex] || createMissingCodingProblem(selectedDate);
+  $("#codingDate").textContent = `${formatDisplayDate(selectedDate)} · ${activeProblem.topic}`;
+  $("#codingTitle").textContent = "每日 Python Coding";
+  $("#codingSource").href = activeProblem.sourceUrl || "#";
+  $("#codingSource").textContent = activeProblem.sourceUrl ? "打开题目" : "本地练习";
+  $("#problemList").innerHTML = codingProblems
+    .map(
+      (problem, index) => `
+        <button class="problem-card ${index === activeProblemIndex ? "active" : ""}" data-index="${index}">
+          <strong>${index + 1}. ${problem.title}</strong>
+          <span class="problem-meta">${problem.topic} · ${problem.difficulty} · ${problem.hot100 ? "Hot 100" : problem.source}</span>
+          <span class="subtitle-zh">${problem.promptNote}</span>
+        </button>
+      `,
+    )
+    .join("");
+  document.querySelectorAll(".problem-card").forEach((button) => {
+    button.addEventListener("click", () => selectProblem(Number(button.dataset.index)));
+  });
+  $("#codeEditor").value = activeProblem.starterCode || "";
+  hintIndex = 0;
+  renderHints();
+  $("#judgeOutput").textContent = "先读题，再写代码。点击“语法检查”会指出本地可检测的行号和结构问题。";
+}
+
+function selectProblem(index) {
+  activeProblemIndex = index;
+  renderCodingLesson();
+}
+
+function bindCoding() {
+  $("#checkSyntax").addEventListener("click", () => {
+    const result = analyzePythonCode($("#codeEditor").value, codingProblems[activeProblemIndex]);
+    $("#judgeOutput").textContent = formatAnalysis(result);
+  });
+  $("#submitCode").addEventListener("click", () => {
+    const result = analyzePythonCode($("#codeEditor").value, codingProblems[activeProblemIndex]);
+    const apiKey = $("#apiKeyInput").value.trim();
+    const verdict = result.errors.length
+      ? "Rejected: 先修复下面的语法/结构问题。"
+      : apiKey
+        ? "Local Accepted: 本地预检通过。API 深度判题接口待接入后端代理。"
+        : "Local Accepted: 本地语法和结构预检通过。正式运行测试需要接入后端 Python sandbox。";
+    $("#judgeOutput").textContent = `${verdict}\n\n${formatAnalysis(result)}`;
+  });
+  $("#nextHint").addEventListener("click", () => {
+    hintIndex += 1;
+    renderHints();
+  });
+}
+
+function renderHints() {
+  const problem = codingProblems[activeProblemIndex] || createMissingCodingProblem(selectedDate);
+  const visibleHints = problem.hints.slice(0, Math.max(1, hintIndex));
+  $("#hintList").innerHTML = visibleHints.map((hint, index) => `<div class="hint-item">${index + 1}. ${hint}</div>`).join("");
 }
 
 function syncSubtitle() {
@@ -675,12 +739,14 @@ async function loadContentLibrary() {
 function setLessonsForDate(date) {
   englishLesson = getEnglishLessonForDate(date);
   readingLesson = getReadingLessonForDate(date);
+  codingProblems = getCodingProblemsForDate(date);
+  activeProblemIndex = 0;
 }
 
 function getEnglishLessonForDate(date) {
   const assignment = getDayAssignment(date);
   const resource = assignment ? contentLibrary?.englishResources?.[assignment.english] : null;
-  if (!resource) return createMissingEnglishLesson(date);
+  if (!resource || !resource.mediaUrl) return createMissingEnglishLesson(date);
   return {
     id: assignment.english,
     title: resource.title,
@@ -690,6 +756,12 @@ function getEnglishLessonForDate(date) {
     subtitles: resource.subtitles || [],
     words: resource.words || [],
   };
+}
+
+function getCodingProblemsForDate(date) {
+  const assignment = getDayAssignment(date);
+  if (!assignment?.coding?.length) return [createMissingCodingProblem(date)];
+  return assignment.coding.map((id) => contentLibrary?.codingResources?.[id] || createMissingCodingProblem(date));
 }
 
 function getReadingLessonForDate(date) {
@@ -745,6 +817,85 @@ function createMissingReadingLesson(date) {
       "资源库不会自动复用旧文章；请先补齐月度 manifest，再发布到日历。",
     ],
   };
+}
+
+function createMissingCodingProblem(date) {
+  return {
+    missing: true,
+    title: "该日期 Coding 题单待入库",
+    topic: "Pending",
+    difficulty: "Pending",
+    source: "Mimic",
+    sourceUrl: "",
+    hot100: false,
+    promptNote: `${formatDisplayDate(date)} 还没有通过校验的 Coding 题单。`,
+    starterCode: "class Solution:\n    def solve(self, nums):\n        pass\n",
+    expectedSignature: "def solve",
+    keywords: [],
+    hints: ["先补齐资源库中的 coding 数组。"],
+  };
+}
+
+function analyzePythonCode(code, problem) {
+  const errors = [];
+  const warnings = [];
+  const lines = code.split("\n");
+  const stack = [];
+  const pairs = { "(": ")", "[": "]", "{": "}" };
+  const closing = new Set(Object.values(pairs));
+  let inTriple = null;
+
+  lines.forEach((line, lineIndex) => {
+    const lineNumber = lineIndex + 1;
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) return;
+    const indent = line.match(/^\s*/)[0].replaceAll("\t", "    ").length;
+    if (indent % 4 !== 0) warnings.push(`Line ${lineNumber}: 缩进不是 4 的倍数，Python 可能解释成错误层级。`);
+    if (/^(if|elif|else|for|while|def|class|try|except|finally|with)\b/.test(trimmed) && !trimmed.endsWith(":")) {
+      errors.push(`Line ${lineNumber}: 控制语句或函数定义结尾缺少冒号。`);
+    }
+    for (let charIndex = 0; charIndex < line.length; charIndex += 1) {
+      const char = line[charIndex];
+      const triple = line.slice(charIndex, charIndex + 3);
+      if ((triple === "'''" || triple === '"""')) {
+        inTriple = inTriple === triple ? null : triple;
+        charIndex += 2;
+        continue;
+      }
+      if (inTriple) continue;
+      if (pairs[char]) stack.push({ char, line: lineNumber, column: charIndex + 1 });
+      if (closing.has(char)) {
+        const last = stack.pop();
+        if (!last || pairs[last.char] !== char) {
+          errors.push(`Line ${lineNumber}, Col ${charIndex + 1}: 括号 ${char} 没有匹配的左括号。`);
+        }
+      }
+    }
+  });
+
+  stack.forEach((item) => errors.push(`Line ${item.line}, Col ${item.column}: 括号 ${item.char} 没有闭合。`));
+  if (problem?.expectedSignature && !code.includes(problem.expectedSignature)) {
+    errors.push(`缺少预期函数签名：${problem.expectedSignature}。`);
+  }
+  const keywordHits = (problem?.keywords || []).filter((keyword) => code.toLowerCase().includes(keyword.split(" ")[0].toLowerCase()));
+  if (problem?.keywords?.length && keywordHits.length === 0) {
+    warnings.push(`没有检测到主题关键词：${problem.keywords.join(", ")}。这不一定错，但建议确认解法模式。`);
+  }
+  return { errors, warnings };
+}
+
+function formatAnalysis(result) {
+  const lines = [];
+  if (!result.errors.length && !result.warnings.length) return "未发现本地可检测的问题。";
+  if (result.errors.length) {
+    lines.push("Errors:");
+    result.errors.forEach((error) => lines.push(`- ${error}`));
+  }
+  if (result.warnings.length) {
+    lines.push("Warnings:");
+    result.warnings.forEach((warning) => lines.push(`- ${warning}`));
+  }
+  return lines.join("\n");
 }
 
 function buildFallbackContentLibrary() {

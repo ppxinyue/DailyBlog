@@ -8,8 +8,10 @@ const now = new Date();
 
 for (const [monthKey, month] of Object.entries(library.months || {})) {
   const englishIds = new Set();
+  const englishReadingIds = new Set();
   const readingIds = new Set();
   const duplicateEnglish = new Set();
+  const duplicateEnglishReading = new Set();
   const duplicateReading = new Set();
   const days = month.days || {};
   const expectedDays = daysInMonth(monthKey);
@@ -25,10 +27,27 @@ for (const [monthKey, month] of Object.entries(library.months || {})) {
     if (!library.readingResources?.[assignment.reading]) {
       errors.push(`${dateKey} references missing reading resource ${assignment.reading}`);
     }
+    if (assignment.englishReading && !library.englishReadingResources?.[assignment.englishReading]) {
+      errors.push(`${dateKey} references missing English reading resource ${assignment.englishReading}`);
+    }
+    if (!Array.isArray(assignment.coding) || assignment.coding.length !== 3) {
+      errors.push(`${dateKey} must assign exactly 3 coding problems`);
+    } else {
+      const codingResources = assignment.coding.map((id) => library.codingResources?.[id]);
+      codingResources.forEach((resource, index) => {
+        if (!resource) errors.push(`${dateKey} references missing coding resource ${assignment.coding[index]}`);
+      });
+      const topics = new Set(codingResources.filter(Boolean).map((resource) => resource.topic));
+      if (topics.size > 1) {
+        errors.push(`${dateKey} coding problems must share one topic, found: ${[...topics].join(", ")}`);
+      }
+    }
 
     if (englishIds.has(assignment.english)) duplicateEnglish.add(assignment.english);
+    if (assignment.englishReading && englishReadingIds.has(assignment.englishReading)) duplicateEnglishReading.add(assignment.englishReading);
     if (readingIds.has(assignment.reading)) duplicateReading.add(assignment.reading);
     englishIds.add(assignment.english);
+    if (assignment.englishReading) englishReadingIds.add(assignment.englishReading);
     readingIds.add(assignment.reading);
   }
 
@@ -38,9 +57,29 @@ for (const [monthKey, month] of Object.entries(library.months || {})) {
   if (duplicateReading.size) {
     errors.push(`${monthKey} repeats reading resource IDs: ${[...duplicateReading].join(", ")}`);
   }
+  if (duplicateEnglishReading.size) {
+    errors.push(`${monthKey} repeats English reading resource IDs: ${[...duplicateEnglishReading].join(", ")}`);
+  }
   if (Object.keys(days).length < expectedDays) {
     warnings.push(`${monthKey} has ${Object.keys(days).length}/${expectedDays} assigned days`);
   }
+}
+
+const assignedDates = Object.values(library.months || {}).flatMap((month) => Object.keys(month.days || {})).sort();
+const planDays = library.updatePolicy?.totalDays;
+if (planDays && assignedDates.length !== planDays) {
+  errors.push(`100-day plan expected ${planDays} assigned dates, found ${assignedDates.length}`);
+}
+const assignedCoding = new Set();
+for (const month of Object.values(library.months || {})) {
+  for (const assignment of Object.values(month.days || {})) {
+    for (const id of assignment.coding || []) assignedCoding.add(id);
+  }
+}
+const hot100Count = Object.entries(library.codingResources || {})
+  .filter(([id, resource]) => resource.hot100 && assignedCoding.has(id)).length;
+if (hot100Count < 100) {
+  errors.push(`Coding plan covers ${hot100Count}/100 Hot 100 problems`);
 }
 
 const refreshDays = library.updatePolicy?.refreshOnLastDays ?? 3;

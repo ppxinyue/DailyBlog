@@ -123,9 +123,16 @@ main {
 }
 
 .practice-grid,
+.coding-layout {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+}
+
 .video-column,
 .study-column,
 .reading-main,
+.coding-main,
 .library {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -135,6 +142,7 @@ main {
 
 .video-column,
 .reading-main,
+.coding-main,
 .library {
   padding: 18px;
 }
@@ -240,6 +248,84 @@ main {
 .word-list {
   display: grid;
   gap: 10px;
+}
+
+.problem-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.problem-card {
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  text-align: left;
+}
+
+.problem-card.active {
+  background: #fff8e5;
+  border-color: var(--accent-2);
+}
+
+.problem-meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.code-editor {
+  background: #0f1720;
+  border: 1px solid #24364a;
+  border-radius: 8px;
+  color: #edf6ff;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.55;
+  min-height: 320px;
+  padding: 14px;
+  resize: vertical;
+  width: 100%;
+}
+
+.coding-controls {
+  justify-content: flex-start;
+  margin-top: 12px;
+}
+
+.judge-output {
+  background: var(--surface-2);
+  border-radius: 8px;
+  color: var(--text);
+  line-height: 1.6;
+  margin-top: 12px;
+  min-height: 72px;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.api-key-input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  margin-top: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  width: 100%;
+}
+
+.hint-list {
+  display: grid;
+  gap: 8px;
+}
+
+.hint-item {
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 10px;
 }
 
 .word-card {
@@ -516,6 +602,7 @@ main {
   }
 
   .practice-grid,
+  .coding-layout,
   .recording-item {
     grid-template-columns: 1fr;
   }

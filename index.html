@@ -15,6 +15,7 @@
       <nav class="tabs" aria-label="练习板块">
         <button class="tab active" data-target="english">英语视频</button>
         <button class="tab" data-target="chinese">中文朗读</button>
+        <button class="tab" data-target="coding">Coding</button>
       </nav>
     </header>
 
@@ -82,6 +83,40 @@
           </div>
           <article id="readingText" class="reading-text"></article>
         </section>
+      </section>
+
+      <section id="coding" class="panel">
+        <div class="coding-layout">
+          <section class="coding-main">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="codingDate"></p>
+                <h2 id="codingTitle"></h2>
+              </div>
+              <a id="codingSource" class="button-link" href="#" target="_blank" rel="noreferrer">打开题目</a>
+            </div>
+            <div id="problemList" class="problem-list"></div>
+            <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
+            <div class="studio-controls coding-controls">
+              <button id="checkSyntax" class="secondary">语法检查</button>
+              <button id="submitCode" class="primary">提交判定</button>
+              <button id="nextHint" class="ghost">下一步提示</button>
+            </div>
+            <div id="judgeOutput" class="judge-output"></div>
+          </section>
+
+          <aside class="study-column">
+            <section>
+              <h2>API Key</h2>
+              <p class="source-line">可选。当前先做本地语法和结构检查；接入后端或模型后可用于更细的错误解析。</p>
+              <input id="apiKeyInput" class="api-key-input" type="password" placeholder="sk-..." autocomplete="off" />
+            </section>
+            <section>
+              <h2>动态提示</h2>
+              <div id="hintList" class="hint-list"></div>
+            </section>
+          </aside>
+        </div>
       </section>
 
       <section class="library">
