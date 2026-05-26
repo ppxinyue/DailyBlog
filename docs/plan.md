@@ -20,3 +20,4 @@
 9. Keep the visual style minimal with line-box cards and readable text.
 10. In the Insight box, show each daily item with a read checkbox and STAR-format summary.
 11. Show the Insight scope line and the active source-channel list in small text.
+12. Prioritize Anthropic technical posts and include same-day X/forum hot topics when they overlap the user's focus areas.

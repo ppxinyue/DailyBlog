@@ -59,3 +59,4 @@
 - Reduced the interface to four simple vertical boxes with only a title, resource link, and per-day learning reflection input.
 - Added an inline Insight reading checklist and changed visible Insight summaries to concise STAR-format summaries.
 - Added the Insight scope line and visible source-channel list, including xAI, Neuralink, and Tesla AI / Optimus.
+- Increased Insight source priority for Anthropic technical posts and added same-day hot-topic channels from X Trends, Hacker News, Reddit, Hugging Face Papers, and GitHub Trending.

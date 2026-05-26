@@ -10,7 +10,8 @@ The Insight module gives an AI-industry-centered daily view for a cognitive neur
 - Each item must have a publication or update date within the last 3 months.
 - Do not repeat links across days.
 - Include original URL, source name, publication date, Chinese summary, and why it matters for the user's AI + mind/brain/social-science background.
-- Prefer AI industry and applied research first: Microsoft Research Asia AI and Brain, Microsoft Research AI & Society / Societal AI, OpenAI, Anthropic, Google DeepMind, Meta AI, Apple ML, NVIDIA, top internet/AI company research blogs, Kaggle, GitHub, and production agent/evaluation projects.
+- Prefer AI industry and applied research first: Microsoft Research Asia AI and Brain, Microsoft Research AI & Society / Societal AI, OpenAI, Anthropic Engineering/News/Research, Google DeepMind, Meta AI, Apple ML, NVIDIA, top internet/AI company research blogs, Kaggle, GitHub, and production agent/evaluation projects.
+- Check daily hot topics from X Trends and technical forums such as Hacker News, Reddit r/MachineLearning, Reddit r/LocalLLaMA, Hugging Face Papers, and GitHub Trending. If a hot topic overlaps the user's focus areas, include it that day.
 - Interpret selected items through one or more of these lenses: cognitive neuroscience, neurodiversity, developmental psychology, children, education, mental health, and social simulation.
 - Good items include industry agent evaluation work, AI accessibility for neurodiverse users, child/developmental learning products, education copilots, mental health support boundaries, synthetic society / generative-agent simulations, human-vs-LLM social or moral behavior gaps, and business cases where human cognitive habits affect agent design.
 - Also track Elon Musk-related AI/brain/robotics signals, especially xAI, Neuralink, and Tesla AI / Optimus, when they connect to AI industry, brain-computer interfaces, robotics agents, cognition, safety, or social impact.
@@ -37,12 +38,14 @@ Each insight item includes:
 ## Update Workflow
 
 1. Search source watchlists and recent web results.
-2. Start with AI industry/product/applied-research signals, then add academic papers only when they help interpret industry practice.
-3. Keep only items published or updated within 92 days.
-4. Deduplicate by URL against all previous days.
-5. Write the daily item list into `data/insights.json`.
-6. Run `node scripts/check-insights.mjs`.
-7. Commit the data update.
+2. Check Anthropic Engineering/News/Research before general news because technical implementation posts are high priority.
+3. Check X Trends and technical forums for same-day hot topics; include overlapping topics when they match the user's focus areas.
+4. Start with AI industry/product/applied-research signals, then add academic papers only when they help interpret industry practice.
+5. Keep only items published or updated within 92 days.
+6. Deduplicate by URL against all previous days.
+7. Write the daily item list into `data/insights.json`.
+8. Run `node scripts/check-insights.mjs`.
+9. Commit the data update.
 
 ## Production Notes
 

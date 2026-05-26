@@ -21,12 +21,44 @@
       "url": "https://www.microsoft.com/en-us/research/research-area/artificial-intelligence/"
     },
     {
+      "name": "Anthropic Engineering",
+      "url": "https://www.anthropic.com/engineering"
+    },
+    {
+      "name": "Anthropic News",
+      "url": "https://www.anthropic.com/news"
+    },
+    {
+      "name": "Anthropic Research",
+      "url": "https://www.anthropic.com/research"
+    },
+    {
       "name": "Kaggle Competitions",
       "url": "https://www.kaggle.com/competitions"
     },
     {
       "name": "GitHub Trending / AI repositories",
       "url": "https://github.com/trending"
+    },
+    {
+      "name": "Hacker News Top Stories",
+      "url": "https://news.ycombinator.com/"
+    },
+    {
+      "name": "Reddit r/MachineLearning",
+      "url": "https://www.reddit.com/r/MachineLearning/"
+    },
+    {
+      "name": "Reddit r/LocalLLaMA",
+      "url": "https://www.reddit.com/r/LocalLLaMA/"
+    },
+    {
+      "name": "Hugging Face Papers",
+      "url": "https://huggingface.co/papers"
+    },
+    {
+      "name": "X Trends API",
+      "url": "https://docs.x.com/x-api/trends/introduction"
     },
     {
       "name": "Neurodiversity and AI accessibility",
