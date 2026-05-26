@@ -55,3 +55,4 @@
 - Removed all remaining recording UI and code: Chinese recording button, recording library, camera/studio DOM, MediaRecorder flow, and recording IndexedDB access.
 - Simplified Coding to two external resource links: NeetCode Roadmap and Hello Interview Practice.
 - Removed the local Coding editor, syntax-check controls, hints, judge output, and `/api/python/analyze` backend behavior.
+- Changed the todo modules to a single vertical stack, shortened module copy, and increased small-text sizes for readability.
