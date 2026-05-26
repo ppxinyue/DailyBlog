@@ -51,3 +51,4 @@
 - Added Coding resource links to LeetCode Top 100 and `rasbt/LLMs-from-scratch`, while keeping daily generated questions and local Python syntax checks.
 - Expanded Insight rendering to show detailed Chinese summaries and added children, education, mental health, accessibility, and developmental psychology coverage.
 - Updated the Daily Insight automation prompt to require `detailedSummary` and to track children, education, mental health, and AI wellbeing sources.
+- Restyled the dashboard to match the requested experimental portfolio reference: large condensed `DAILY_TODO` title, grey grid background, thick black outer frame, line-based cards, monochrome typography, and orange action accents.

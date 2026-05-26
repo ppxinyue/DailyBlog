@@ -31,3 +31,4 @@
 20. Remove English recording from the product flow and link English practice to a dedicated high-quality shadowing site.
 21. Link Chinese reading to a high-quality daily reading site while keeping local Chinese reading recording.
 22. Make Insight summaries more detailed and explicitly include children, education, mental health, neurodiversity, and AI industry applications.
+23. Restyle the daily todo dashboard as a monochrome line-grid interface with a bold experimental portfolio feel and orange action accents.
