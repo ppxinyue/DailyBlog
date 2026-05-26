@@ -23,5 +23,5 @@
 12. Use the final three days of each month as the window for preparing the next month's manifest.
 13. Build a 100-day content plan with English reading, Chinese reading, and Python coding.
 14. Add a Coding module with daily interview-focused problem sets, local syntax checks, submit prechecks, and progressive hints.
-15. Add a daily Insight module for cognitive neuroscience + AI industry/research signals, with source links, Chinese summaries, and favorites.
+15. Add a daily AI-industry-centered Insight module interpreted through cognitive neuroscience, neurodiversity, developmental psychology, and social simulation, with source links, Chinese summaries, and favorites.
 16. Add Coding mistake tracking with per-problem submit/error counts and a local wrong-answer notebook.

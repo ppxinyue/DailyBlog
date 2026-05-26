@@ -37,6 +37,7 @@
 - Added an Insight tab with source links, Chinese summaries, why-it-matters notes, tags, and local favorite storage.
 - Added `scripts/check-insights.mjs` to validate insight freshness, metadata completeness, and URL deduplication.
 - Added `docs/insight-library.md` documenting the daily 00:00 update workflow and source-selection rules.
+- Refined Insight selection rules to prioritize AI industry and applied research while interpreting items through cognitive neuroscience, neurodiversity, developmental psychology, and social simulation.
 - Added local Coding stats with per-problem submit counts, error counts, wrong-book flags, and last error summaries.
 - Added a Coding wrong-answer notebook UI with remove and clear controls.
 - Verified that a failed submit increments submit/error counts, adds the problem to the wrong-answer notebook, and preserves the judge output.

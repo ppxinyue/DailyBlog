@@ -9,6 +9,10 @@
   },
   "watchlist": [
     {
+      "name": "AI industry research and product launches",
+      "url": "https://www.microsoft.com/en-us/ai"
+    },
+    {
       "name": "Microsoft Research Asia AI and Brain",
       "url": "https://www.microsoft.com/en-us/research/lab/microsoft-research-asia/"
     },
@@ -23,6 +27,18 @@
     {
       "name": "GitHub Trending / AI repositories",
       "url": "https://github.com/trending"
+    },
+    {
+      "name": "Neurodiversity and AI accessibility",
+      "url": "https://www.microsoft.com/en-us/accessibility"
+    },
+    {
+      "name": "Developmental psychology and AI learning companions",
+      "url": "https://www.unicef.org/innovation/artificial-intelligence"
+    },
+    {
+      "name": "Social simulation and generative agents",
+      "url": "https://hai.stanford.edu/"
     }
   ],
   "days": {
