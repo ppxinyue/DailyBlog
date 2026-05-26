@@ -15,3 +15,4 @@
 - English practice now depends on the availability and UX of the external ShadowingEnglish site.
 - Chinese daily reading now depends on the availability and editorial choices of 每日一文.
 - Daily reflection inputs are browser-local via `localStorage`; cross-device, multi-browser sync, or export still requires backend storage or a file export feature.
+- Insight read/unread state is browser-local via `localStorage`.

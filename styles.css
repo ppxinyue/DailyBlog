@@ -80,3 +80,52 @@ textarea:focus {
   outline: 3px solid var(--orange);
   outline-offset: 2px;
 }
+
+.insight-list {
+  display: grid;
+  gap: 14px;
+}
+
+.insight-item {
+  border: 2px solid var(--line);
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.read-row {
+  align-items: start;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 22px 1fr;
+}
+
+.read-row input {
+  height: 18px;
+  margin-top: 4px;
+  width: 18px;
+}
+
+.read-row a {
+  font-size: 16px;
+}
+
+.star-summary {
+  display: grid;
+  gap: 7px 10px;
+  grid-template-columns: 28px 1fr;
+  margin: 0;
+}
+
+.star-summary dt {
+  background: var(--orange);
+  border: 1px solid var(--line);
+  font-weight: 900;
+  text-align: center;
+}
+
+.star-summary dd {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}

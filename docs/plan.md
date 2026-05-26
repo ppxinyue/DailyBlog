@@ -18,3 +18,4 @@
 7. Link Insight to the local daily Insight resource file.
 8. Remove local video/audio recording, calendar UI, completion stats, coding editors, Python backend checks, and expanded in-page Insight cards from the visible website.
 9. Keep the visual style minimal with line-box cards and readable text.
+10. In the Insight box, show each daily item with a read checkbox and STAR-format summary.

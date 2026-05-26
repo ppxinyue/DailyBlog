@@ -56,6 +56,12 @@
         "url": "https://link.springer.com/article/10.1007/s10462-026-11493-x",
         "tags": ["cognitive-neuroscience", "ai-evaluation", "cognitive-architecture"],
         "zhSummary": "这篇综述尝试整合认知科学、心理学、神经科学和人工智能的评估框架，讨论如何评价智能系统的认知能力。",
+        "starSummary": {
+          "situation": "AI agent 评测常停留在任务成功率，难以解释失败来自哪个认知环节。",
+          "task": "建立能对齐认知科学、心理学、神经科学和 AI 的能力拆解框架。",
+          "action": "按感知、注意、记忆、计划、推理、适应、解释等维度评价系统表现。",
+          "result": "业务 agent 评测可从“是否完成”升级为“具体哪种认知能力失效”。"
+        },
         "detailedSummary": "这条适合放在每日 Insight 的“评测方法论”位置：它把 AI 能力评估从单一任务分数扩展到感知、注意、记忆、计划、推理、适应和解释等维度。对 agent 产品来说，这意味着评测不应只问“能不能完成任务”，还要问系统在哪个认知环节失败，例如是否误读用户意图、是否遗忘关键约束、是否过早停止探索、是否无法解释自身选择。这个框架也能和 cognitive neuroscience 的实验范式对齐，用更细粒度的指标描述人和模型在同一任务中的差异。",
         "whyItMatters": "对 agent 评测有直接启发：业务场景不只需要看任务成功率，还可以把感知、注意、记忆、计划、推理、适应和解释能力拆成可测维度。"
       },
@@ -68,6 +74,12 @@
         "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6588659",
         "tags": ["microsoft-ai", "social-ai", "consciousness-attribution"],
         "zhSummary": "Microsoft AI 相关作者讨论“看似有意识的 AI”如何触发用户的意识归因，并将风险分为个体层面的依赖、自主性侵蚀和社会层面的地位、政治冲突等。",
+        "starSummary": {
+          "situation": "聊天式 AI 通过记忆、情绪回应和自我叙述，容易让用户误以为它有意识。",
+          "task": "识别这种意识归因会带来的个体依赖、自主性削弱和社会冲突风险。",
+          "action": "在陪伴、教育、心理健康产品中评测拟人化误解、依赖性和危机转介边界。",
+          "result": "产品指标不能只看留存和满意度，还要测用户是否形成不恰当信任。"
+        },
         "detailedSummary": "这条可以作为“社会心理风险”样本：LLM 并不需要真的有意识，产品只要表现出持续记忆、情绪回应、自我叙述和关系语言，就可能诱发用户的意识归因。儿童、青少年、孤独人群、心理健康脆弱人群尤其需要更严格的界面和评测边界。面向教育或陪伴场景时，评测应加入依赖性、拟人化误解、自主性削弱、价值观暗示、求助转介等指标，而不只是满意度和留存。",
         "whyItMatters": "这贴近你关心的 social / moral 问题：LLM 是否真的有意识不是唯一重点，用户如何把它当成有意识对象，会直接影响产品设计、伦理边界和评测指标。"
       },
@@ -80,6 +92,12 @@
         "url": "https://www.prism-global.com/",
         "tags": ["metacognition", "ai-consciousness", "neuroscience"],
         "zhSummary": "PRISM 近期围绕 AI consciousness、metacognition 和神经科学测试组织系列讨论，关注如何把意识、元认知和社会准备纳入 AI 风险议题。",
+        "starSummary": {
+          "situation": "AI 意识和元认知讨论正在从哲学问题进入产品风险和测试设计。",
+          "task": "把 neuroscience 中的意识、信心、自我报告测量转化为 AI 行为评测问题。",
+          "action": "关注模型何时表达不确定性、如何报告理由、用户是否因此改变信任判断。",
+          "result": "可用于设计 agent 信心校准、自我解释和人类信任校准测试。"
+        },
         "whyItMatters": "这类讨论适合作为前沿理念监测：它把 neuroscience 的测量问题和 AI 产品可能引发的社会归因问题连接起来，能启发 agent 的自我报告、信心估计和人类信任评测。"
       },
       {
@@ -91,6 +109,12 @@
         "url": "https://arcprize.org/competitions/2026",
         "tags": ["kaggle", "reasoning", "agi-evaluation"],
         "zhSummary": "ARC Prize 2026 将抽象推理任务继续放到竞赛环境中，强调少样本、组合泛化和人类式推理能力。",
+        "starSummary": {
+          "situation": "许多业务任务不是检索事实，而是在少样本中发现新规则。",
+          "task": "评测 AI 是否具备组合泛化和抽象规则归纳能力。",
+          "action": "用 ARC 类任务观察模型如何从少量示例推断规则并迁移到新输入。",
+          "result": "可为 agent 评测加入“规则发现”维度，避免只测知识问答。"
+        },
         "whyItMatters": "对 agent 评测有启发：业务场景里很多任务不是知识检索，而是少样本规则发现。ARC 类任务可作为设计认知型评测的参考。"
       },
       {
@@ -102,6 +126,12 @@
         "url": "https://ossinsight.io/collections/ai/",
         "tags": ["github", "open-source", "industry-signal"],
         "zhSummary": "OSSInsight 的 AI 集合追踪 GitHub 上 AI 相关项目热度，可作为观察业界工具链迁移、agent 框架和开源生态变化的入口。",
+        "starSummary": {
+          "situation": "论文能说明新方法，但不一定反映开发者实际采用什么工具。",
+          "task": "持续观察 AI 工程生态、agent 框架和开源评测工具的真实热度。",
+          "action": "跟踪 GitHub AI 项目的趋势、issue、benchmark、demo 和失败案例。",
+          "result": "能帮助你把研究问题落到真实产品约束，如稳定性、隐私、评测自动化。"
+        },
         "detailedSummary": "这条提供“行业温度计”：论文通常解释新方法，GitHub 热度则显示开发者实际在试什么。对 agent 评测、教育 AI、心理健康 AI 来说，开源项目的 issue、benchmark、demo 和失败案例能帮助你发现真实落地问题，例如工具调用稳定性、长程记忆、隐私边界、用户画像、异常输入和评测自动化。每日 Insight 可以把它当作工程侧信号源，而不是论文替代品。",
         "whyItMatters": "学术论文之外，GitHub 热度能反映落地端正在采用什么框架。对你做业务场景 agent 评测，开源项目的 issue、benchmark 和示例任务很有参考价值。"
       },
@@ -114,6 +144,12 @@
         "url": "https://www.unicef.org/innovation/artificial-intelligence",
         "tags": ["children", "education-ai", "mental-health", "accessibility", "developmental-psychology"],
         "zhSummary": "UNICEF Office of Innovation 将 AI 用于儿童保护、教育可及性、健康、福祉和开放创新，页面中包含 AI for Education and Accessibility、AI for Health、AI in Play 等方向。",
+        "starSummary": {
+          "situation": "儿童、教育和心理健康 AI 场景对安全、公平和发展阶段更敏感。",
+          "task": "把 AI 能力建设放进儿童学习、无障碍、健康和福祉的真实使用环境。",
+          "action": "关注教师/家长在环、隐私、危机转介、文化适配和 neurodiverse 支持。",
+          "result": "agent 评测应按人群和场景拆分，而不是套用成人办公场景指标。"
+        },
         "detailedSummary": "这条补上儿童、教育和心理健康 AI 的行业应用视角。UNICEF 的重点不是单纯做更强模型，而是把 AI 放进儿童成长环境：个性化学习、教师支持、无障碍学习、社区健康工作者培训、诊断分流、儿童福祉和开放源代码方案。对你的方向，它提示每日 Insight 应该关注“儿童发展阶段 + 使用场景 + 风险边界”：同一个聊天式 agent，在成人办公、儿童学习、neurodiverse 学生支持和心理健康陪伴中的评测指标完全不同。值得跟踪的指标包括学习迁移、情绪依赖、家长/教师在环、危机转介、隐私保护、公平性和文化适配。",
         "whyItMatters": "这能把 AI 行业动态和 developmental psychology、neurodiversity、教育产品、心理健康支持连接起来，帮助你设计更贴近真实业务的 agent 评测框架。"
       }

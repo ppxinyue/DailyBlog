@@ -57,3 +57,4 @@
 - Removed the local Coding editor, syntax-check controls, hints, judge output, and `/api/python/analyze` backend behavior.
 - Changed the todo modules to a single vertical stack, shortened module copy, and increased small-text sizes for readability.
 - Reduced the interface to four simple vertical boxes with only a title, resource link, and per-day learning reflection input.
+- Added an inline Insight reading checklist and changed visible Insight summaries to concise STAR-format summaries.
