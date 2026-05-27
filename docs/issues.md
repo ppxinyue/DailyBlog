@@ -21,4 +21,5 @@
 - The Insight More button currently loads from a static `moreSearch` pool in `data/insights.json`; true live web search still requires a backend/search connector.
 - Blog drafts are browser-local via `localStorage`; cross-device sync and publishing still require backend storage or export.
 - Blog PNG export runs in the browser with Canvas and downloads one PNG per generated page; browser download settings may prompt per file.
+- GitHub push is currently blocked because no remote is configured, `gh` and `brew` are not installed, and direct `github.com` connectivity timed out from this environment.
 - External browsers can show stale assets if `index.html` or scripts are cached; the local server now sends no-cache headers, but a hard refresh may still be needed once after the change.
