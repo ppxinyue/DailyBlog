@@ -206,27 +206,28 @@ def run_insight_startup_update() -> None:
         print("Insight startup update skipped: DAILYBLOG_SKIP_INSIGHT_UPDATE=1")
         return
 
-    command = os.environ.get("DAILYBLOG_INSIGHT_UPDATE_CMD")
-    if command:
-        print(f"Running Insight startup update: {command}")
-        result = subprocess.run(
-            command,
-            cwd=ROOT,
-            env=git_env(),
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=180,
-            check=False,
-        )
-        if result.stdout.strip():
-            print(result.stdout.strip())
-        if result.stderr.strip():
-            print(result.stderr.strip(), file=sys.stderr)
-        print(f"Insight startup update exited with code {result.returncode}")
+    command = os.environ.get("DAILYBLOG_INSIGHT_UPDATE_CMD") or "node scripts/update-insights.mjs"
+    print(f"Running Insight startup update: {command}")
+    result = subprocess.run(
+        command,
+        cwd=ROOT,
+        env=git_env(),
+        shell=True,
+        capture_output=True,
+        text=True,
+        timeout=180,
+        check=False,
+    )
+    if result.stdout.strip():
+        print(result.stdout.strip())
+    if result.stderr.strip():
+        print(result.stderr.strip(), file=sys.stderr)
+    print(f"Insight startup update exited with code {result.returncode}")
+    if result.returncode == 0:
         return
 
     check_command = ["node", "scripts/check-insights.mjs"]
+    print("Falling back to existing Insight validation.")
     result = subprocess.run(
         check_command,
         cwd=ROOT,

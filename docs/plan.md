@@ -48,4 +48,4 @@
 37. Require explicit Save actions in Todo and Blog before writing repository-backed user data or running Git publish.
 38. Show save/publish status in the UI, including raw Git error details when a command fails.
 39. Start local editing through `scripts/start-local.sh`, which runs the single required localhost server.
-40. Run the Insight startup hook when `server.py` starts: validate existing Insight data by default, or execute `DAILYBLOG_INSIGHT_UPDATE_CMD` when a real updater is configured.
+40. Run the Insight startup hook when `server.py` starts: execute `scripts/update-insights.mjs` by default, or execute `DAILYBLOG_INSIGHT_UPDATE_CMD` when an alternate updater is configured.
