@@ -17,3 +17,4 @@
 - Daily reflection inputs are browser-local via `localStorage`; cross-device, multi-browser sync, or export still requires backend storage or a file export feature.
 - Insight read/unread state is browser-local via `localStorage`.
 - Calendar, simple statistics, and Insight favorites are browser-local via `localStorage`; cross-device sync still requires backend storage or export/import.
+- On 2026-05-27, the Daily Insight automation was configured as ACTIVE, but no `2026-05-27` entry was written to `data/insights.json`; no local automation run log was found under `/Users/pp/.codex/automations/daily-insight-refresh`.

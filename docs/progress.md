@@ -68,3 +68,4 @@
 - Moved the Insight module to the top of the content stack directly under the calendar/statistics overview.
 - Compressed the overview into a lightweight statistics panel with a smaller mini calendar.
 - Split the overview into a left-half mini calendar and right-side lightweight statistic charts.
+- Added the missing 2026-05-27 Insight set manually after confirming the daily automation had not written today's `data/insights.json` entry.
