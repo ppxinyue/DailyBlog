@@ -306,10 +306,20 @@ function bindBlogEditor() {
 
 function renderBlog() {
   const stats = document.querySelector("#blogWordStats");
-  if (!stats) return;
+  const archive = document.querySelector("#blogArchive");
+  if (!stats || !archive) return;
   const content = document.querySelector("#blogEditor")?.value || blogPosts[currentBlogDate] || "";
   const count = countBlogText(content);
   stats.textContent = `${count.characters} chars · ${count.words} words · ${count.lines} lines`;
+  archive.innerHTML = renderBlogArchive();
+  archive.querySelectorAll("[data-blog-date]").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentBlogDate = button.dataset.blogDate;
+      const editor = document.querySelector("#blogEditor");
+      if (editor) editor.value = blogPosts[currentBlogDate] || "";
+      renderBlog();
+    });
+  });
 }
 
 function renderBlogArticle(content) {
