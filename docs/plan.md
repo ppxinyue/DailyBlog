@@ -45,3 +45,5 @@
 34. Persist writable user state in `data/user-data.json` through the local server instead of relying only on browser `localStorage`.
 35. Let localhost save actions commit and push data changes so GitHub Pages republishes the latest blog, favorites, notes, and completion state.
 36. Keep Insight generation as a local write workflow: update `data/insights.json` locally, then commit/push it for Pages to display.
+37. Require explicit Save actions in Todo and Blog before writing repository-backed user data or running Git publish.
+38. Show save/publish status in the UI, including raw Git error details when a command fails.

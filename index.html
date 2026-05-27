@@ -15,6 +15,11 @@
       <h1 id="pageTitle">Daily Todo</h1>
     </header>
     <main id="todoView" class="todo-grid app-view" aria-label="每日任务">
+      <section class="save-panel" aria-label="Todo save">
+        <button type="button" id="saveTodoData" class="primary-save-button">Save</button>
+        <pre id="todoSaveStatus" class="save-status" aria-live="polite">Ready</pre>
+      </section>
+
       <section class="overview-card" aria-label="日历和统计">
         <div id="calendar" class="calendar"></div>
         <div id="dailyStats" class="daily-stats"></div>
@@ -105,17 +110,17 @@
         <div class="blog-export-row">
           <button type="button" id="exportBlogPng">Export PNG</button>
           <button type="button" id="stashBlogDraft">Stash</button>
-          <button type="button" id="saveBlogPost">Save</button>
+          <button type="button" id="saveBlogPost" class="primary-save-button">Save</button>
           <span id="exportBlogStatus"></span>
-          <span id="blogSaveStatus"></span>
           <span id="blogWordStats"></span>
         </div>
+        <pre id="blogSaveStatus" class="save-status" aria-live="polite">Ready</pre>
         <details class="blog-history">
           <summary>Past Blogs</summary>
           <div id="blogArchive" class="blog-archive"></div>
         </details>
       </section>
     </main>
-    <script src="./app.js?v=20260527-local-data"></script>
+    <script src="./app.js?v=20260527-explicit-save"></script>
   </body>
 </html>

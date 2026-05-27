@@ -87,3 +87,5 @@
 - Extended `server.py` with localhost-only write APIs for user data, Insight data, and Git publish operations.
 - Updated the frontend to load state from `/api/user-data` on localhost and from `data/user-data.json` on GitHub Pages, with `localStorage` retained as a browser fallback/migration source.
 - Changed localhost save flows so Todo notes/checks, Insight reads/favorites, and saved Blog posts can write local JSON and trigger Git commit/push for GitHub Pages refreshes.
+- Added explicit prominent Save controls to both Todo and Blog views, so editing only marks the page unsaved and Git publish runs after pressing Save.
+- Added visible save status panels that report success or the raw Git command/stdout/stderr returned by the local server.

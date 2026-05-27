@@ -76,6 +76,60 @@ body {
   padding: 26px;
 }
 
+.save-panel {
+  align-items: stretch;
+  background: #1f1f1f;
+  border: 1px solid #1f1f1f;
+  border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 14px;
+}
+
+.primary-save-button {
+  background: #16a34a;
+  border: 1px solid #16a34a;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  min-height: 46px;
+  padding: 0 24px;
+}
+
+.primary-save-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.save-status {
+  background: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 0;
+  max-height: 170px;
+  overflow: auto;
+  padding: 10px;
+  white-space: pre-wrap;
+}
+
+.save-status.is-ok {
+  background: rgb(22 163 74 / 0.22);
+  border-color: rgb(74 222 128 / 0.55);
+}
+
+.save-status.is-error {
+  background: rgb(220 38 38 / 0.22);
+  border-color: rgb(248 113 113 / 0.65);
+}
+
 .overview-card {
   align-items: start;
   background: var(--card);
@@ -266,6 +320,14 @@ body {
   padding: 7px 11px;
 }
 
+.blog-export-row .primary-save-button {
+  background: #16a34a;
+  border-color: #16a34a;
+  font-size: 14px;
+  min-height: 38px;
+  padding: 0 20px;
+}
+
 .blog-export-row button:disabled {
   cursor: wait;
   opacity: 0.58;
@@ -275,6 +337,12 @@ body {
   color: #5f86df;
   font-size: 12px;
   font-weight: 800;
+}
+
+.blog-editor > .save-status {
+  background: #16315f;
+  border-color: rgb(95 134 223 / 0.38);
+  color: #ffffff;
 }
 
 .blog-poster-hero {
@@ -822,6 +890,10 @@ textarea:focus,
   .overview-card {
     gap: 12px;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .save-panel {
+    grid-template-columns: 1fr;
   }
 
   .todo-card {

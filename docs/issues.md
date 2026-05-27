@@ -17,7 +17,7 @@
 - Daily reflection inputs, Insight read/unread state, statistics, favorites, Blog posts, and drafts now persist to `data/user-data.json` when using the local server; direct GitHub Pages edits remain read-only.
 - On 2026-05-27, the Daily Insight automation was configured as ACTIVE, but no `2026-05-27` entry was written to `data/insights.json`; no local automation run log was found under `/Users/pp/.codex/automations/daily-insight-refresh`.
 - The Insight More button currently loads from a static `moreSearch` pool in `data/insights.json`; true live web search still requires a backend/search connector.
-- Blog drafts still avoid auto-pushing on every keystroke; the local server writes them to `data/user-data.json`, while saved Blog posts trigger publish.
+- Blog and Todo edits now avoid auto-pushing on every keystroke; repository-backed writes and Git publish are explicit Save actions.
 - Blog PNG export runs in the browser with Canvas and downloads one PNG per generated page; browser download settings may prompt per file.
 - GitHub push now depends on a valid local GitHub credential and network/proxy availability; local save can succeed even if automatic push fails.
 - External browsers can show stale assets if `index.html` or scripts are cached; the local server now sends no-cache headers, but a hard refresh may still be needed once after the change.

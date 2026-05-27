@@ -24,7 +24,6 @@ let activeInsightView = "today";
 let moreInsightLoaded = false;
 let currentBlogDate = todayKey;
 let localDataWritable = false;
-let stateSaveTimer = 0;
 
 initApp();
 
@@ -36,6 +35,7 @@ async function initApp() {
   bindViewSwitch();
   bindBlogEditor();
   bindBlogExport();
+  bindPageSaveActions();
 }
 
 async function loadUserData() {
@@ -60,7 +60,7 @@ function bindDailyInputs() {
     input.value = notes[key] || "";
     input.addEventListener("input", () => {
       notes[key] = input.value;
-      scheduleUserDataSave({ publish: true, message: "Update DailyBlog todo notes" });
+      setSaveStatus("todo", "Unsaved", "pending");
     });
   });
 
@@ -69,7 +69,7 @@ function bindDailyInputs() {
     input.checked = Boolean(completions[key]);
     input.addEventListener("change", () => {
       completions[key] = input.checked;
-      scheduleUserDataSave({ publish: true, message: "Update DailyBlog completions" });
+      setSaveStatus("todo", "Unsaved", "pending");
       renderOverview();
     });
   });
@@ -128,15 +128,9 @@ function writeLocalStorageState() {
   }
 }
 
-function scheduleUserDataSave(options = {}) {
-  writeLocalStorageState();
-  window.clearTimeout(stateSaveTimer);
-  stateSaveTimer = window.setTimeout(() => saveUserData(options), options.publish ? 1200 : 500);
-}
-
 async function saveUserData(options = {}) {
   writeLocalStorageState();
-  if (!localDataWritable) return { ok: false, offline: true };
+  if (!localDataWritable) return { ok: false, offline: true, error: "Open the localhost server to save and publish." };
   try {
     const response = await fetch("/api/user-data", {
       method: "POST",
@@ -149,12 +143,11 @@ async function saveUserData(options = {}) {
     });
     const result = await response.json();
     if (!response.ok || result.publish?.ok === false) {
-      throw new Error(result.publish?.stderr || result.stderr || "Save failed");
+      return { ...result, ok: false };
     }
     return result;
   } catch (error) {
-    setBlogSaveStatus(`Local save failed: ${error.message}`);
-    return { ok: false, error };
+    return { ok: false, error: error.message };
   }
 }
 
@@ -234,7 +227,7 @@ function bindInsightItemControls() {
   list.querySelectorAll("[data-insight-read]").forEach((input) => {
     input.addEventListener("change", () => {
       readInsights[input.dataset.insightRead] = input.checked;
-      scheduleUserDataSave({ publish: true, message: "Update DailyBlog insight reads" });
+      setSaveStatus("todo", "Unsaved", "pending");
       renderOverview();
     });
   });
@@ -242,7 +235,7 @@ function bindInsightItemControls() {
     button.addEventListener("click", () => {
       const id = button.dataset.insightFavorite;
       favoriteInsights[id] = !favoriteInsights[id];
-      scheduleUserDataSave({ publish: true, message: "Update DailyBlog insight favorites" });
+      setSaveStatus("todo", "Unsaved", "pending");
       button.textContent = favoriteInsights[id] ? "★" : "☆";
       button.setAttribute("aria-pressed", String(Boolean(favoriteInsights[id])));
       renderOverview();
@@ -426,14 +419,12 @@ function bindBlogEditor() {
   if (titleInput) titleInput.value = getBlogTitle(currentBlogDate);
   editor.addEventListener("input", () => {
     blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
-    scheduleUserDataSave({ publish: false, message: "Update DailyBlog blog draft" });
-    setBlogSaveStatus("Drafting");
+    setSaveStatus("blog", "Unsaved", "pending");
     renderBlog();
   });
   titleInput?.addEventListener("input", () => {
     blogTitleDrafts[currentBlogDate] = titleInput.value;
-    scheduleUserDataSave({ publish: false, message: "Update DailyBlog blog draft" });
-    setBlogSaveStatus("Drafting");
+    setSaveStatus("blog", "Unsaved", "pending");
     renderBlog();
   });
   bindBlogToolbar();
@@ -461,7 +452,7 @@ function renderBlog() {
       const titleInput = document.querySelector("#blogTitle");
       if (editor) setBlogEditorContent(editor, getBlogEditorContent(currentBlogDate));
       if (titleInput) titleInput.value = getBlogTitle(currentBlogDate);
-      setBlogSaveStatus(blogDrafts[currentBlogDate] ? "Draft loaded" : "Saved loaded");
+      setSaveStatus("blog", blogDrafts[currentBlogDate] ? "Draft loaded" : "Saved loaded", "pending");
       renderBlog();
     });
   });
@@ -632,28 +623,12 @@ function bindBlogSaveActions() {
     if (!editor) return;
     blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
     blogTitleDrafts[currentBlogDate] = titleInput?.value || "";
-    setBlogSaveStatus("Stashing...");
-    saveUserData({ publish: false, message: "Update DailyBlog blog draft" }).then((result) => {
-      setBlogSaveStatus(result.ok ? "Draft stashed" : "Draft stashed locally");
-    });
+    setSaveStatus("blog", "Draft stashed. Press Save to publish.", "pending");
     renderBlog();
   });
 
   document.querySelector("#saveBlogPost")?.addEventListener("click", () => {
-    const editor = document.querySelector("#blogEditor");
-    const titleInput = document.querySelector("#blogTitle");
-    if (!editor) return;
-    const content = getBlogEditorValue(editor);
-    const title = titleInput?.value || "";
-    blogPosts[currentBlogDate] = content;
-    blogDrafts[currentBlogDate] = content;
-    blogTitles[currentBlogDate] = title;
-    blogTitleDrafts[currentBlogDate] = title;
-    setBlogSaveStatus("Publishing...");
-    saveUserData({ publish: true, message: `Publish DailyBlog post ${currentBlogDate}` }).then((result) => {
-      setBlogSaveStatus(result.ok ? "Saved and pushed" : "Saved locally");
-    });
-    renderBlog();
+    saveBlogData();
   });
 }
 
@@ -674,15 +649,80 @@ function applyBlogFormat(button) {
   }
 
   blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
-  scheduleUserDataSave({ publish: false, message: "Update DailyBlog blog draft" });
-  setBlogSaveStatus("Drafting");
+  setSaveStatus("blog", "Unsaved", "pending");
   renderBlog();
 }
 
-function setBlogSaveStatus(message) {
-  const target = document.querySelector("#blogSaveStatus");
+function bindPageSaveActions() {
+  document.querySelector("#saveTodoData")?.addEventListener("click", () => saveTodoData());
+}
+
+async function saveTodoData() {
+  const button = document.querySelector("#saveTodoData");
+  if (button) button.disabled = true;
+  setSaveStatus("todo", "Saving...");
+  const result = await saveUserData({ publish: true, message: `Publish DailyBlog todo ${todayKey}` });
+  setSaveStatus("todo", formatSaveResult(result), result.ok ? "ok" : "error");
+  if (button) button.disabled = false;
+}
+
+async function saveBlogData() {
+  const button = document.querySelector("#saveBlogPost");
+  const editor = document.querySelector("#blogEditor");
+  const titleInput = document.querySelector("#blogTitle");
+  if (!editor) return;
+  const content = getBlogEditorValue(editor);
+  const title = titleInput?.value || "";
+  blogPosts[currentBlogDate] = content;
+  blogDrafts[currentBlogDate] = content;
+  blogTitles[currentBlogDate] = title;
+  blogTitleDrafts[currentBlogDate] = title;
+  if (button) button.disabled = true;
+  setSaveStatus("blog", "Saving...");
+  const result = await saveUserData({ publish: true, message: `Publish DailyBlog post ${currentBlogDate}` });
+  setSaveStatus("blog", formatSaveResult(result), result.ok ? "ok" : "error");
+  if (button) button.disabled = false;
+  renderBlog();
+}
+
+function setSaveStatus(scope, message, state = "") {
+  const target = document.querySelector(scope === "todo" ? "#todoSaveStatus" : "#blogSaveStatus");
   if (!target) return;
   target.textContent = message;
+  target.classList.toggle("is-ok", state === "ok");
+  target.classList.toggle("is-error", state === "error");
+}
+
+function formatSaveResult(result) {
+  if (result.ok) {
+    const publish = result.publish;
+    if (!publish) return "success\nSaved locally.";
+    return [
+      "success",
+      publish.message || "",
+      publish.command ? `command: ${publish.command}` : "",
+      publish.stdout ? `stdout:\n${publish.stdout}` : "",
+      publish.stderr ? `stderr:\n${publish.stderr}` : ""
+    ].filter(Boolean).join("\n");
+  }
+  if (result.publish) return formatGitError(result.publish);
+  return [
+    "error",
+    result.command ? `command: ${result.command}` : "",
+    result.stdout ? `stdout:\n${result.stdout}` : "",
+    result.stderr ? `stderr:\n${result.stderr}` : "",
+    result.error ? `error:\n${result.error}` : ""
+  ].filter(Boolean).join("\n");
+}
+
+function formatGitError(result) {
+  return [
+    "error",
+    result.command ? `command: ${result.command}` : "",
+    result.stdout ? `stdout:\n${result.stdout}` : "",
+    result.stderr ? `stderr:\n${result.stderr}` : "",
+    result.message ? `message:\n${result.message}` : ""
+  ].filter(Boolean).join("\n");
 }
 
 function cleanBlogText(text) {
