@@ -8,9 +8,13 @@
   </head>
   <body>
     <header class="page-header">
-      <h1>Daily Todo</h1>
+      <div class="view-switch" aria-label="页面切换">
+        <button type="button" data-app-view="todo" class="is-active">Todo</button>
+        <button type="button" data-app-view="blog">Blog</button>
+      </div>
+      <h1 id="pageTitle">Daily Todo</h1>
     </header>
-    <main class="todo-grid" aria-label="每日任务">
+    <main id="todoView" class="todo-grid app-view" aria-label="每日任务">
       <section class="overview-card" aria-label="日历和统计">
         <div id="calendar" class="calendar"></div>
         <div id="dailyStats" class="daily-stats"></div>
@@ -65,6 +69,18 @@
         <textarea data-note="coding" placeholder="write something"></textarea>
       </section>
     </main>
-    <script src="./app.js?v=20260527-insight-tools"></script>
+
+    <main id="blogView" class="blog-view app-view" aria-label="Blog" hidden>
+      <section class="blog-editor">
+        <textarea id="blogEditor" placeholder="write blog"></textarea>
+      </section>
+      <section class="blog-layout">
+        <article id="blogPreview" class="blog-article"></article>
+        <aside class="blog-side">
+          <div id="blogArchive" class="blog-archive"></div>
+        </aside>
+      </section>
+    </main>
+    <script src="./app.js?v=20260527-blog"></script>
   </body>
 </html>

@@ -70,3 +70,4 @@
 - Split the overview into a left-half mini calendar and right-side lightweight statistic charts.
 - Added the missing 2026-05-27 Insight set manually after confirming the daily automation had not written today's `data/insights.json` entry.
 - Added Insight History, Saved, and More controls; More shows a loading placeholder before rendering expanded Insight results.
+- Added a top-level Todo/Blog switch and a local Blog writing page with automatic markdown-like formatting, article preview, tags, and archive list.
