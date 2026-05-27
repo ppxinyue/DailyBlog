@@ -74,16 +74,29 @@
       <section class="blog-editor">
         <div class="blog-export-row">
           <button type="button" id="exportBlogPng">Export PNG</button>
+          <button type="button" id="stashBlogDraft">Stash</button>
+          <button type="button" id="saveBlogPost">Save</button>
           <span id="exportBlogStatus"></span>
+          <span id="blogSaveStatus"></span>
           <span id="blogWordStats"></span>
         </div>
-        <textarea id="blogEditor" placeholder="write blog"></textarea>
+        <div class="blog-toolbar" aria-label="Blog text tools">
+          <button type="button" data-blog-format="heading" data-level="1">H1</button>
+          <button type="button" data-blog-format="heading" data-level="2">H2</button>
+          <button type="button" data-blog-format="heading" data-level="3">H3</button>
+          <button type="button" data-blog-format="bold">B</button>
+          <button type="button" data-blog-format="strike">S</button>
+          <button type="button" class="color-tool color-pink" data-blog-format="color" data-color="#d92d87" aria-label="Pink text"></button>
+          <button type="button" class="color-tool color-blue" data-blog-format="color" data-color="#2563eb" aria-label="Blue text"></button>
+          <button type="button" class="color-tool color-green" data-blog-format="color" data-color="#16803c" aria-label="Green text"></button>
+        </div>
+        <div id="blogEditor" class="blog-writing-surface" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="write blog"></div>
         <details class="blog-history">
           <summary>Past Blogs</summary>
           <div id="blogArchive" class="blog-archive"></div>
         </details>
       </section>
     </main>
-    <script src="./app.js?v=20260527-candy-blog"></script>
+    <script src="./app.js?v=20260527-blog-editing"></script>
   </body>
 </html>

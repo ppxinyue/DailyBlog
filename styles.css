@@ -270,7 +270,55 @@ body {
   font-weight: 800;
 }
 
-.blog-editor textarea {
+.blog-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-toolbar button {
+  align-items: center;
+  background: rgb(255 255 255 / 0.74);
+  border: 1px solid rgb(255 255 255 / 0.9);
+  border-radius: 999px;
+  color: #56345f;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  height: 34px;
+  justify-content: center;
+  min-width: 38px;
+  padding: 0 12px;
+}
+
+.blog-toolbar button:hover,
+.blog-toolbar button:focus-visible {
+  box-shadow: 0 0 0 3px rgb(255 120 189 / 0.18);
+}
+
+.blog-toolbar .color-tool {
+  border: 3px solid rgb(255 255 255 / 0.92);
+  min-width: 34px;
+  padding: 0;
+  width: 34px;
+}
+
+.blog-toolbar .color-pink {
+  background: #d92d87;
+}
+
+.blog-toolbar .color-blue {
+  background: #2563eb;
+}
+
+.blog-toolbar .color-green {
+  background: #16803c;
+}
+
+.blog-writing-surface {
   background:
     radial-gradient(circle at 96% 8%, rgb(255 198 230 / 0.55) 0 42px, transparent 43px),
     radial-gradient(circle at 6% 95%, rgb(155 230 255 / 0.42) 0 58px, transparent 59px),
@@ -288,6 +336,37 @@ body {
   min-height: 62vh;
   padding: clamp(28px, 5vw, 72px);
   tab-size: 2;
+}
+
+.blog-writing-surface:empty::before {
+  color: #b391bd;
+  content: attr(data-placeholder);
+}
+
+.blog-writing-surface h1,
+.blog-writing-surface h2,
+.blog-writing-surface h3,
+.blog-writing-surface p,
+.blog-writing-surface blockquote {
+  margin: 0 0 0.75em;
+}
+
+.blog-writing-surface h1 {
+  font-size: 1.4em;
+}
+
+.blog-writing-surface h2 {
+  font-size: 1.18em;
+}
+
+.blog-writing-surface h3 {
+  font-size: 1.02em;
+}
+
+.blog-writing-surface blockquote {
+  border-left: 4px solid #ff78bd;
+  color: #6d4c76;
+  padding-left: 18px;
 }
 
 .blog-history {
@@ -476,7 +555,8 @@ textarea {
   width: 100%;
 }
 
-textarea:focus {
+textarea:focus,
+.blog-writing-surface:focus {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -658,8 +738,9 @@ textarea:focus {
     padding: 16px;
   }
 
-  .blog-editor textarea {
+  .blog-writing-surface {
     min-height: 64vh;
+    padding: 22px;
   }
 
   .overview-card {

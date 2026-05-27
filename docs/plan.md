@@ -34,3 +34,4 @@
 23. Support exporting the current Blog as a series of polished 1080x1440 PNG images for Xiaohongshu/Rednote.
 24. Make Blog a large writing-first editor with live word statistics and no Todo modules inside the Blog view.
 25. Give Blog its own candy-particle UI style and add a collapsible past-blog list below the editor.
+26. Add basic Blog text editing controls plus separate draft stashing and saved-post persistence.

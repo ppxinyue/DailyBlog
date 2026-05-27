@@ -5,6 +5,7 @@ const completions = JSON.parse(localStorage.getItem("mimic-daily-completions") |
 const readInsights = JSON.parse(localStorage.getItem("mimic-read-insights") || "{}");
 const favoriteInsights = JSON.parse(localStorage.getItem("mimic-favorite-insights") || "{}");
 const blogPosts = JSON.parse(localStorage.getItem("mimic-blog-posts") || "{}");
+const blogDrafts = JSON.parse(localStorage.getItem("mimic-blog-drafts") || "{}");
 let insightLibrary = null;
 let currentInsightItems = [];
 let activeInsightView = "today";
@@ -295,12 +296,15 @@ function setAppView(view) {
 function bindBlogEditor() {
   const editor = document.querySelector("#blogEditor");
   if (!editor) return;
-  editor.value = blogPosts[currentBlogDate] || "";
+  setBlogEditorContent(editor, getBlogEditorContent(currentBlogDate));
   editor.addEventListener("input", () => {
-    blogPosts[currentBlogDate] = editor.value;
-    localStorage.setItem("mimic-blog-posts", JSON.stringify(blogPosts));
+    blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
+    localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+    setBlogSaveStatus("Drafting");
     renderBlog();
   });
+  bindBlogToolbar();
+  bindBlogSaveActions();
   renderBlog();
 }
 
@@ -308,7 +312,8 @@ function renderBlog() {
   const stats = document.querySelector("#blogWordStats");
   const archive = document.querySelector("#blogArchive");
   if (!stats || !archive) return;
-  const content = document.querySelector("#blogEditor")?.value || blogPosts[currentBlogDate] || "";
+  const editor = document.querySelector("#blogEditor");
+  const content = editor ? getBlogEditorValue(editor) : getBlogEditorContent(currentBlogDate);
   const count = countBlogText(content);
   stats.textContent = `${count.characters} chars · ${count.words} words · ${count.lines} lines`;
   archive.innerHTML = renderBlogArchive();
@@ -316,7 +321,8 @@ function renderBlog() {
     button.addEventListener("click", () => {
       currentBlogDate = button.dataset.blogDate;
       const editor = document.querySelector("#blogEditor");
-      if (editor) editor.value = blogPosts[currentBlogDate] || "";
+      if (editor) setBlogEditorContent(editor, getBlogEditorContent(currentBlogDate));
+      setBlogSaveStatus(blogDrafts[currentBlogDate] ? "Draft loaded" : "Saved loaded");
       renderBlog();
     });
   });
@@ -338,10 +344,10 @@ function renderBlogArticle(content) {
 }
 
 function parseBlogContent(content) {
-  const lines = content.split("\n");
+  const lines = blogContentToLines(content);
   const titleLine = lines.find((line) => line.trim().startsWith("# "));
   const tagsLine = lines.find((line) => line.trim().toLowerCase().startsWith("tags:"));
-  const title = titleLine ? titleLine.replace(/^#\s*/, "").trim() : "";
+  const title = titleLine ? cleanBlogText(titleLine.replace(/^#\s*/, "").trim()) : "";
   const tags = tagsLine ? tagsLine.split(":").slice(1).join(":").split(",").map((tag) => tag.trim()).filter(Boolean) : [];
   const blocks = [];
   let list = [];
@@ -352,17 +358,18 @@ function parseBlogContent(content) {
       flushList();
       continue;
     }
-    if (line.startsWith("## ")) {
+    if (/^#{1,3}\s+/.test(line)) {
       flushList();
-      blocks.push({ type: "heading", text: line.replace(/^##\s*/, "") });
+      const level = Math.min(3, line.match(/^#+/)?.[0].length || 2);
+      blocks.push({ type: "heading", level, text: cleanBlogText(line.replace(/^#{1,3}\s*/, "")) });
     } else if (line.startsWith("> ")) {
       flushList();
-      blocks.push({ type: "quote", text: line.replace(/^>\s*/, "") });
+      blocks.push({ type: "quote", text: cleanBlogText(line.replace(/^>\s*/, "")) });
     } else if (/^[-*]\s+/.test(line)) {
-      list.push(line.replace(/^[-*]\s+/, ""));
+      list.push(cleanBlogText(line.replace(/^[-*]\s+/, "")));
     } else {
       flushList();
-      blocks.push({ type: "paragraph", text: line });
+      blocks.push({ type: "paragraph", text: cleanBlogText(line) });
     }
   }
   flushList();
@@ -395,7 +402,7 @@ function renderBlogArchive() {
 }
 
 function countBlogText(content) {
-  const trimmed = content.trim();
+  const trimmed = cleanBlogText(content).trim();
   const cjk = trimmed.match(/[\u4e00-\u9fff]/g)?.length || 0;
   const words = trimmed.match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*/g)?.length || 0;
   const lines = trimmed ? trimmed.split(/\n+/).filter((line) => line.trim()).length : 0;
@@ -406,6 +413,138 @@ function countBlogText(content) {
   };
 }
 
+function getBlogEditorContent(dateKey) {
+  return blogDrafts[dateKey] || blogPosts[dateKey] || "";
+}
+
+function getBlogEditorValue(editor) {
+  const html = editor.innerHTML.replace(/<br>$/i, "").trim();
+  return html === "<br>" ? "" : html;
+}
+
+function setBlogEditorContent(editor, content) {
+  editor.innerHTML = looksLikeHtml(content) ? content : plainBlogTextToHtml(content);
+}
+
+function looksLikeHtml(content) {
+  return /<\/?[a-z][\s\S]*>/i.test(content || "");
+}
+
+function plainBlogTextToHtml(content) {
+  const lines = (content || "").split("\n");
+  if (!lines.length || !content.trim()) return "";
+  return lines.map((line) => {
+    const trimmed = line.trim();
+    if (!trimmed) return "<p><br></p>";
+    if (/^#\s+/.test(trimmed)) return `<h1>${escapeHtml(trimmed.replace(/^#\s+/, ""))}</h1>`;
+    if (/^##\s+/.test(trimmed)) return `<h2>${escapeHtml(trimmed.replace(/^##\s+/, ""))}</h2>`;
+    if (/^###\s+/.test(trimmed)) return `<h3>${escapeHtml(trimmed.replace(/^###\s+/, ""))}</h3>`;
+    if (/^>\s+/.test(trimmed)) return `<blockquote>${escapeHtml(trimmed.replace(/^>\s+/, ""))}</blockquote>`;
+    return `<p>${escapeHtml(trimmed)}</p>`;
+  }).join("");
+}
+
+function blogContentToLines(content) {
+  if (!looksLikeHtml(content)) return content.split("\n");
+  const wrapper = document.createElement("div");
+  wrapper.innerHTML = content;
+  const lines = [];
+  wrapper.childNodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent.trim();
+      if (text) lines.push(text);
+      return;
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const tag = node.tagName.toLowerCase();
+    const text = node.textContent.trim();
+    if (!text) return;
+    if (tag === "h1") lines.push(`# ${text}`);
+    else if (tag === "h2") lines.push(`## ${text}`);
+    else if (tag === "h3") lines.push(`### ${text}`);
+    else if (tag === "blockquote") lines.push(`> ${text}`);
+    else if (tag === "li") lines.push(`- ${text}`);
+    else if (tag === "ul" || tag === "ol") {
+      node.querySelectorAll("li").forEach((item) => {
+        const itemText = item.textContent.trim();
+        if (itemText) lines.push(`- ${itemText}`);
+      });
+    } else {
+      lines.push(text);
+    }
+  });
+  return lines;
+}
+
+function bindBlogToolbar() {
+  document.querySelectorAll("[data-blog-format]").forEach((button) => {
+    button.addEventListener("click", () => applyBlogFormat(button));
+  });
+}
+
+function bindBlogSaveActions() {
+  document.querySelector("#stashBlogDraft")?.addEventListener("click", () => {
+    const editor = document.querySelector("#blogEditor");
+    if (!editor) return;
+    blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
+    localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+    setBlogSaveStatus("Draft stashed");
+    renderBlog();
+  });
+
+  document.querySelector("#saveBlogPost")?.addEventListener("click", () => {
+    const editor = document.querySelector("#blogEditor");
+    if (!editor) return;
+    const content = getBlogEditorValue(editor);
+    blogPosts[currentBlogDate] = content;
+    blogDrafts[currentBlogDate] = content;
+    localStorage.setItem("mimic-blog-posts", JSON.stringify(blogPosts));
+    localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+    setBlogSaveStatus("Saved");
+    renderBlog();
+  });
+}
+
+function applyBlogFormat(button) {
+  const editor = document.querySelector("#blogEditor");
+  if (!editor) return;
+  const format = button.dataset.blogFormat;
+  editor.focus();
+  if (format === "bold") {
+    document.execCommand("bold");
+  } else if (format === "strike") {
+    document.execCommand("strikeThrough");
+  } else if (format === "color") {
+    document.execCommand("foreColor", false, button.dataset.color);
+  } else if (format === "heading") {
+    const level = Number(button.dataset.level || 2);
+    document.execCommand("formatBlock", false, `H${Math.min(3, Math.max(1, level))}`);
+  }
+
+  blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
+  localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+  setBlogSaveStatus("Drafting");
+  renderBlog();
+}
+
+function setBlogSaveStatus(message) {
+  const target = document.querySelector("#blogSaveStatus");
+  if (!target) return;
+  target.textContent = message;
+}
+
+function cleanBlogText(text) {
+  return text
+    .replace(/<span\s+style="color:\s*#[0-9a-fA-F]{3,6}">([\s\S]*?)<\/span>/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\*\*([\s\S]*?)\*\*/g, "$1")
+    .replace(/~~([\s\S]*?)~~/g, "$1");
+}
+
 function bindBlogExport() {
   document.querySelector("#exportBlogPng")?.addEventListener("click", exportBlogPngSeries);
 }
@@ -413,7 +552,8 @@ function bindBlogExport() {
 async function exportBlogPngSeries() {
   const button = document.querySelector("#exportBlogPng");
   const status = document.querySelector("#exportBlogStatus");
-  const content = blogPosts[currentBlogDate] || document.querySelector("#blogEditor")?.value || "";
+  const editor = document.querySelector("#blogEditor");
+  const content = editor ? getBlogEditorValue(editor) : getBlogEditorContent(currentBlogDate);
   const parsed = parseBlogContent(content);
   if (button) button.disabled = true;
   if (status) status.textContent = "Rendering...";
@@ -458,8 +598,9 @@ function createBlogSlides(parsed) {
 
   parsed.blocks.forEach((block) => {
     if (block.type === "heading") {
-      context.font = "700 44px Inter, system-ui, sans-serif";
-      wrapCanvasText(context, block.text, maxWidth).forEach((line) => addLine({ type: "heading", text: line, height: 66 }));
+      const size = block.level === 1 ? 52 : block.level === 2 ? 44 : 38;
+      context.font = `700 ${size}px Inter, system-ui, sans-serif`;
+      wrapCanvasText(context, block.text, maxWidth).forEach((line) => addLine({ type: "heading", level: block.level, text: line, height: size + 22 }));
       y += 14;
       return;
     }
@@ -533,7 +674,8 @@ function renderBlogSlide(slide, parsed, pageNumber, totalPages) {
   slide.items.forEach((item) => {
     if (item.type === "heading") {
       ctx.fillStyle = "#1f1f1f";
-      ctx.font = "800 44px Inter, system-ui, sans-serif";
+      const size = item.level === 1 ? 52 : item.level === 2 ? 44 : 38;
+      ctx.font = `800 ${size}px Inter, system-ui, sans-serif`;
       ctx.fillText(item.text, 92, item.y);
     } else if (item.type === "quote") {
       ctx.fillStyle = "#1f1f1f";

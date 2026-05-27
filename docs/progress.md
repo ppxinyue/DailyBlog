@@ -74,4 +74,5 @@
 - Added Blog PNG export that paginates the current post into polished 1080x1440 images suitable for Xiaohongshu/Rednote.
 - Changed Blog into a large writing-first editor with live character/word/line statistics and removed the preview/archive layout.
 - Restyled Blog with a candy-particle visual treatment and added a collapsible past-blog list under the editor.
+- Added a rich Blog editing surface with heading, bold, strikethrough, and font color controls, plus separate draft stash and saved-post actions.
 - Updated the local static server to send no-cache headers and restarted `127.0.0.1:4174` so external browsers receive the latest files.
