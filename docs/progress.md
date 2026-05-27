@@ -89,3 +89,5 @@
 - Changed localhost save flows so Todo notes/checks, Insight reads/favorites, and saved Blog posts can write local JSON and trigger Git commit/push for GitHub Pages refreshes.
 - Added explicit prominent Save controls to both Todo and Blog views, so editing only marks the page unsaved and Git publish runs after pressing Save.
 - Added visible save status panels that report success or the raw Git command/stdout/stderr returned by the local server.
+- Added `scripts/start-local.sh` as the one-command local startup entrypoint.
+- Added a `server.py` startup Insight hook: it validates existing `data/insights.json` by default and can run a configured `DAILYBLOG_INSIGHT_UPDATE_CMD` before serving localhost.

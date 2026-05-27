@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import os
 import posixpath
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -200,8 +201,59 @@ def git_env() -> dict[str, str]:
     return env
 
 
+def run_insight_startup_update() -> None:
+    if os.environ.get("DAILYBLOG_SKIP_INSIGHT_UPDATE") == "1":
+        print("Insight startup update skipped: DAILYBLOG_SKIP_INSIGHT_UPDATE=1")
+        return
+
+    command = os.environ.get("DAILYBLOG_INSIGHT_UPDATE_CMD")
+    if command:
+        print(f"Running Insight startup update: {command}")
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            env=git_env(),
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=180,
+            check=False,
+        )
+        if result.stdout.strip():
+            print(result.stdout.strip())
+        if result.stderr.strip():
+            print(result.stderr.strip(), file=sys.stderr)
+        print(f"Insight startup update exited with code {result.returncode}")
+        return
+
+    check_command = ["node", "scripts/check-insights.mjs"]
+    result = subprocess.run(
+        check_command,
+        cwd=ROOT,
+        env=git_env(),
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode == 0:
+        print(result.stdout.strip() or "Insight library check passed")
+        print(
+            "Insight startup update note: no DAILYBLOG_INSIGHT_UPDATE_CMD is configured, "
+            "so startup only validates existing data."
+        )
+    else:
+        command_text = " ".join(shlex.quote(part) for part in check_command)
+        print(f"Insight validation failed while running {command_text}", file=sys.stderr)
+        if result.stdout.strip():
+            print(result.stdout.strip())
+        if result.stderr.strip():
+            print(result.stderr.strip(), file=sys.stderr)
+
+
 def main() -> None:
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 4173
+    run_insight_startup_update()
     server = ThreadingHTTPServer(("127.0.0.1", port), NoCacheHandler)
     print(f"DailyBlog local server running at http://127.0.0.1:{port}/")
     server.serve_forever()

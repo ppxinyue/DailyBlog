@@ -10,6 +10,7 @@
 - The refresh job is currently represented by manifest policy, validation scripts, and the local `/api/insights` write endpoint; production ingestion still needs an approved local source/search workflow.
 - Coding now depends on external NeetCode and Hello Interview availability; the site no longer performs local syntax checks or judging.
 - The Insight module has curated seed data and a validation script; fully automated retrieval still depends on a scheduled job with web access and source review.
+- The local server startup hook can run an Insight updater command, but the repository still needs a real updater command configured via `DAILYBLOG_INSIGHT_UPDATE_CMD` for live source retrieval.
 - Insight selection should avoid drifting into general neuroscience; AI industry relevance is the primary filter.
 - Existing English and Chinese seed reading entries are not yet all replaced with open-platform source URLs; production release should ingest from `data/open-platform-sources.json` and preserve item-level attribution/license metadata.
 - English practice now depends on the availability and UX of the external ShadowingEnglish site.
