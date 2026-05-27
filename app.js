@@ -305,20 +305,11 @@ function bindBlogEditor() {
 }
 
 function renderBlog() {
-  const preview = document.querySelector("#blogPreview");
-  const archive = document.querySelector("#blogArchive");
-  if (!preview || !archive) return;
-  const content = blogPosts[currentBlogDate] || "";
-  preview.innerHTML = renderBlogArticle(content);
-  archive.innerHTML = renderBlogArchive();
-  archive.querySelectorAll("[data-blog-date]").forEach((button) => {
-    button.addEventListener("click", () => {
-      currentBlogDate = button.dataset.blogDate;
-      const editor = document.querySelector("#blogEditor");
-      if (editor) editor.value = blogPosts[currentBlogDate] || "";
-      renderBlog();
-    });
-  });
+  const stats = document.querySelector("#blogWordStats");
+  if (!stats) return;
+  const content = document.querySelector("#blogEditor")?.value || blogPosts[currentBlogDate] || "";
+  const count = countBlogText(content);
+  stats.textContent = `${count.characters} chars · ${count.words} words · ${count.lines} lines`;
 }
 
 function renderBlogArticle(content) {
@@ -391,6 +382,18 @@ function renderBlogArchive() {
     const title = parseBlogContent(content).title || "Untitled";
     return `<button type="button" data-blog-date="${dateKey}" class="${dateKey === currentBlogDate ? "is-active" : ""}"><span>${dateKey}</span>${escapeHtml(title)}</button>`;
   }).join("");
+}
+
+function countBlogText(content) {
+  const trimmed = content.trim();
+  const cjk = trimmed.match(/[\u4e00-\u9fff]/g)?.length || 0;
+  const words = trimmed.match(/[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*/g)?.length || 0;
+  const lines = trimmed ? trimmed.split(/\n+/).filter((line) => line.trim()).length : 0;
+  return {
+    characters: [...trimmed.replace(/\s/g, "")].length,
+    words: cjk + words,
+    lines
+  };
 }
 
 function bindBlogExport() {
