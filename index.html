@@ -70,7 +70,8 @@
       </section>
     </main>
 
-    <main id="blogView" class="blog-view app-view" aria-label="Blog" hidden>
+    <main id="blogView" class="blog-view app-view blog-theme-monet" aria-label="Blog" hidden>
+      <canvas id="blogParticleCanvas" class="blog-particle-canvas" aria-hidden="true"></canvas>
       <section class="blog-editor">
         <div class="blog-export-row">
           <button type="button" id="exportBlogPng">Export PNG</button>
@@ -79,6 +80,12 @@
           <span id="exportBlogStatus"></span>
           <span id="blogSaveStatus"></span>
           <span id="blogWordStats"></span>
+        </div>
+        <div class="blog-theme-switcher" aria-label="Blog visual theme">
+          <button type="button" data-blog-theme="monet">Monet</button>
+          <button type="button" data-blog-theme="vangogh">Van Gogh</button>
+          <button type="button" data-blog-theme="hokusai">Hokusai</button>
+          <button type="button" data-blog-theme="kandinsky">Kandinsky</button>
         </div>
         <div class="blog-toolbar" aria-label="Blog text tools">
           <button type="button" data-blog-format="heading" data-level="1">H1</button>
@@ -104,6 +111,6 @@
         </details>
       </section>
     </main>
-    <script src="./app.js?v=20260527-blog-title"></script>
+    <script src="./app.js?v=20260527-blog-particles"></script>
   </body>
 </html>

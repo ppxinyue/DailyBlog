@@ -184,21 +184,20 @@ body {
 
 .blog-view {
   background:
-    radial-gradient(circle at 10% 12%, #ff9ed2 0 7px, transparent 8px),
-    radial-gradient(circle at 24% 28%, #ffe36d 0 5px, transparent 6px),
-    radial-gradient(circle at 82% 14%, #8ee7ff 0 8px, transparent 9px),
-    radial-gradient(circle at 70% 82%, #b6ff7d 0 6px, transparent 7px),
-    radial-gradient(circle at 36% 78%, #c9a7ff 0 7px, transparent 8px),
-    linear-gradient(135deg, #fff7fb, #f2fbff 52%, #fffbea);
+    radial-gradient(circle at 12% 14%, var(--art-glow-a) 0 80px, transparent 82px),
+    radial-gradient(circle at 86% 16%, var(--art-glow-b) 0 110px, transparent 112px),
+    radial-gradient(circle at 28% 88%, var(--art-glow-c) 0 120px, transparent 122px),
+    linear-gradient(135deg, var(--art-bg-a), var(--art-bg-b) 54%, var(--art-bg-c));
   border: 1px solid rgb(255 255 255 / 0.8);
   border-radius: 34px;
-  box-shadow: 0 28px 80px rgb(255 137 194 / 0.22);
+  box-shadow: 0 28px 80px var(--art-shadow);
   display: grid;
   gap: 18px;
   margin: 0 auto;
   max-width: 1040px;
   padding: 18px;
   position: relative;
+  overflow: hidden;
 }
 
 .blog-view::before,
@@ -210,7 +209,7 @@ body {
 }
 
 .blog-view::before {
-  background: #ff7ab8;
+  background: var(--art-accent-a);
   height: 16px;
   right: 52px;
   top: 46px;
@@ -219,12 +218,69 @@ body {
 }
 
 .blog-view::after {
-  background: #7bdcff;
+  background: var(--art-accent-b);
   bottom: 58px;
   height: 14px;
   left: 44px;
   transform: rotate(-24deg);
   width: 40px;
+}
+
+.blog-theme-monet {
+  --art-bg-a: #e9f6f2;
+  --art-bg-b: #d6e7ff;
+  --art-bg-c: #fff0c8;
+  --art-glow-a: rgb(154 214 197 / 0.58);
+  --art-glow-b: rgb(176 189 238 / 0.52);
+  --art-glow-c: rgb(255 203 156 / 0.48);
+  --art-accent-a: #8dc7ba;
+  --art-accent-b: #c8a4d9;
+  --art-shadow: rgb(91 156 180 / 0.24);
+}
+
+.blog-theme-vangogh {
+  --art-bg-a: #15284b;
+  --art-bg-b: #2368a2;
+  --art-bg-c: #f4d35e;
+  --art-glow-a: rgb(255 213 79 / 0.42);
+  --art-glow-b: rgb(67 139 191 / 0.58);
+  --art-glow-c: rgb(19 42 81 / 0.48);
+  --art-accent-a: #ffd64f;
+  --art-accent-b: #74b3ce;
+  --art-shadow: rgb(20 54 102 / 0.34);
+}
+
+.blog-theme-hokusai {
+  --art-bg-a: #e8f2ee;
+  --art-bg-b: #b7d2e6;
+  --art-bg-c: #153e6f;
+  --art-glow-a: rgb(245 246 230 / 0.62);
+  --art-glow-b: rgb(33 95 151 / 0.44);
+  --art-glow-c: rgb(202 61 47 / 0.28);
+  --art-accent-a: #1a5f99;
+  --art-accent-b: #d85644;
+  --art-shadow: rgb(19 62 111 / 0.26);
+}
+
+.blog-theme-kandinsky {
+  --art-bg-a: #fbf0d0;
+  --art-bg-b: #f3b85b;
+  --art-bg-c: #304c89;
+  --art-glow-a: rgb(219 54 60 / 0.42);
+  --art-glow-b: rgb(46 147 126 / 0.48);
+  --art-glow-c: rgb(48 76 137 / 0.38);
+  --art-accent-a: #db363c;
+  --art-accent-b: #2e937e;
+  --art-shadow: rgb(155 87 42 / 0.24);
+}
+
+.blog-particle-canvas {
+  height: 100%;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  z-index: 0;
 }
 
 .blog-editor {
@@ -268,6 +324,30 @@ body {
   color: #7a608f;
   font-size: 13px;
   font-weight: 800;
+}
+
+.blog-theme-switcher {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-theme-switcher button {
+  background: rgb(255 255 255 / 0.7);
+  border: 1px solid rgb(255 255 255 / 0.86);
+  border-radius: 999px;
+  color: #56345f;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 8px 12px;
+}
+
+.blog-theme-switcher button.is-active {
+  background: var(--art-accent-a);
+  color: #fff;
 }
 
 .blog-toolbar {

@@ -76,4 +76,5 @@
 - Restyled Blog with a candy-particle visual treatment and added a collapsible past-blog list under the editor.
 - Added a rich Blog editing surface with heading, bold, strikethrough, and font color controls, plus separate draft stash and saved-post actions.
 - Added automatic Blog date and weekday labels plus a separate title field that is included in draft, save, history, and PNG export flows.
+- Replaced the static Blog background with canvas-driven animated particles and switchable art-inspired palettes for Monet, Van Gogh, Hokusai, and Kandinsky.
 - Updated the local static server to send no-cache headers and restarted `127.0.0.1:4174` so external browsers receive the latest files.

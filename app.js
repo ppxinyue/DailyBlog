@@ -8,11 +8,19 @@ const blogPosts = JSON.parse(localStorage.getItem("mimic-blog-posts") || "{}");
 const blogDrafts = JSON.parse(localStorage.getItem("mimic-blog-drafts") || "{}");
 const blogTitles = JSON.parse(localStorage.getItem("mimic-blog-titles") || "{}");
 const blogTitleDrafts = JSON.parse(localStorage.getItem("mimic-blog-title-drafts") || "{}");
+const blogThemePalettes = {
+  monet: ["#8dc7ba", "#b0bdee", "#ffc89c", "#c8a4d9"],
+  vangogh: ["#ffd64f", "#74b3ce", "#2368a2", "#f4a340"],
+  hokusai: ["#1a5f99", "#d85644", "#f5f6e6", "#70a8c4"],
+  kandinsky: ["#db363c", "#2e937e", "#304c89", "#f3b85b"]
+};
 let insightLibrary = null;
 let currentInsightItems = [];
 let activeInsightView = "today";
 let moreInsightLoaded = false;
 let currentBlogDate = todayKey;
+let activeBlogTheme = localStorage.getItem("mimic-blog-theme") || "monet";
+let blogParticleAnimation = null;
 
 document.querySelectorAll("[data-note]").forEach((input) => {
   const key = `${todayKey}:${input.dataset.note}`;
@@ -38,6 +46,8 @@ renderInsights();
 bindViewSwitch();
 bindBlogEditor();
 bindBlogExport();
+bindBlogTheme();
+startBlogParticles();
 
 async function renderInsights() {
   const list = document.querySelector("#insightList");
@@ -293,6 +303,86 @@ function setAppView(view) {
   document.querySelector("#blogView").hidden = activeView !== "blog";
   document.querySelector("#pageTitle").textContent = activeView === "blog" ? "Daily Blog" : "Daily Todo";
   localStorage.setItem("mimic-active-view", activeView);
+  if (activeView === "blog") resizeBlogParticles();
+}
+
+function bindBlogTheme() {
+  setBlogTheme(activeBlogTheme);
+  document.querySelectorAll("[data-blog-theme]").forEach((button) => {
+    button.addEventListener("click", () => setBlogTheme(button.dataset.blogTheme));
+  });
+}
+
+function setBlogTheme(theme) {
+  const nextTheme = blogThemePalettes[theme] ? theme : "monet";
+  const view = document.querySelector("#blogView");
+  if (!view) return;
+  view.classList.remove(...Object.keys(blogThemePalettes).map((key) => `blog-theme-${key}`));
+  view.classList.add(`blog-theme-${nextTheme}`);
+  activeBlogTheme = nextTheme;
+  localStorage.setItem("mimic-blog-theme", nextTheme);
+  document.querySelectorAll("[data-blog-theme]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.blogTheme === nextTheme);
+  });
+}
+
+function startBlogParticles() {
+  const canvas = document.querySelector("#blogParticleCanvas");
+  const view = document.querySelector("#blogView");
+  if (!canvas || !view || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const ctx = canvas.getContext("2d");
+  const particles = Array.from({ length: 72 }, () => createBlogParticle());
+
+  const draw = () => {
+    resizeBlogParticles();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const palette = blogThemePalettes[activeBlogTheme] || blogThemePalettes.monet;
+    particles.forEach((particle, index) => {
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      particle.drift += particle.spin;
+      if (particle.x < -40) particle.x = canvas.width + 40;
+      if (particle.x > canvas.width + 40) particle.x = -40;
+      if (particle.y < -40) particle.y = canvas.height + 40;
+      if (particle.y > canvas.height + 40) particle.y = -40;
+      ctx.save();
+      ctx.translate(particle.x + Math.sin(particle.drift) * particle.wave, particle.y);
+      ctx.rotate(particle.drift * 0.4);
+      ctx.globalAlpha = particle.alpha;
+      roundRect(ctx, -particle.size / 2, -particle.size / 4, particle.size, particle.size / 2, particle.size / 4, palette[index % palette.length]);
+      ctx.restore();
+    });
+    blogParticleAnimation = window.requestAnimationFrame(draw);
+  };
+
+  resizeBlogParticles();
+  draw();
+  window.addEventListener("resize", resizeBlogParticles);
+}
+
+function resizeBlogParticles() {
+  const canvas = document.querySelector("#blogParticleCanvas");
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const width = Math.max(1, Math.floor(rect.width));
+  const height = Math.max(1, Math.floor(rect.height));
+  if (canvas.width === width && canvas.height === height) return;
+  canvas.width = width;
+  canvas.height = height;
+}
+
+function createBlogParticle() {
+  return {
+    alpha: 0.22 + Math.random() * 0.32,
+    drift: Math.random() * Math.PI * 2,
+    size: 10 + Math.random() * 28,
+    spin: 0.006 + Math.random() * 0.018,
+    vx: -0.18 + Math.random() * 0.36,
+    vy: -0.08 - Math.random() * 0.32,
+    wave: 10 + Math.random() * 34,
+    x: Math.random() * 1100,
+    y: Math.random() * 900
+  };
 }
 
 function bindBlogEditor() {
