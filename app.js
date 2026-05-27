@@ -5,6 +5,9 @@ const completions = JSON.parse(localStorage.getItem("mimic-daily-completions") |
 const readInsights = JSON.parse(localStorage.getItem("mimic-read-insights") || "{}");
 const favoriteInsights = JSON.parse(localStorage.getItem("mimic-favorite-insights") || "{}");
 let insightLibrary = null;
+let currentInsightItems = [];
+let activeInsightView = "today";
+let moreInsightLoaded = false;
 
 document.querySelectorAll("[data-note]").forEach((input) => {
   const key = `${todayKey}:${input.dataset.note}`;
@@ -36,33 +39,17 @@ async function renderInsights() {
     const response = await fetch("./data/insights.json", { cache: "no-cache" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     insightLibrary = await response.json();
-    const items = insightLibrary.days?.[todayKey] || [];
+    currentInsightItems = insightLibrary.days?.[todayKey] || [];
     renderInsightChannels(insightLibrary.watchlist || []);
+    bindInsightActions();
 
-    if (!items.length) {
+    if (!currentInsightItems.length) {
       list.textContent = "今日暂无 Insight";
       renderOverview();
       return;
     }
 
-    list.innerHTML = items.map(renderInsightItem).join("");
-    list.querySelectorAll("[data-insight-read]").forEach((input) => {
-      input.addEventListener("change", () => {
-        readInsights[input.dataset.insightRead] = input.checked;
-        localStorage.setItem("mimic-read-insights", JSON.stringify(readInsights));
-        renderOverview();
-      });
-    });
-    list.querySelectorAll("[data-insight-favorite]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const id = button.dataset.insightFavorite;
-        favoriteInsights[id] = !favoriteInsights[id];
-        localStorage.setItem("mimic-favorite-insights", JSON.stringify(favoriteInsights));
-        button.textContent = favoriteInsights[id] ? "★" : "☆";
-        button.setAttribute("aria-pressed", String(Boolean(favoriteInsights[id])));
-        renderOverview();
-      });
-    });
+    renderInsightList(currentInsightItems);
     renderOverview();
   } catch {
     list.innerHTML = `<a href="./data/insights.json" target="_blank" rel="noreferrer">今日 Insight</a>`;
@@ -77,6 +64,109 @@ function renderInsightChannels(channels) {
     <span>检索渠道：</span>
     ${channels.map((channel) => `<a href="${channel.url}" target="_blank" rel="noreferrer">${channel.name}</a>`).join("")}
   `;
+}
+
+function bindInsightActions() {
+  document.querySelectorAll("[data-insight-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      activeInsightView = button.dataset.insightView;
+      moreInsightLoaded = false;
+      if (activeInsightView === "history") renderInsightHistory();
+      if (activeInsightView === "saved") renderSavedInsights();
+      setActiveInsightButton();
+    });
+  });
+
+  document.querySelector("#moreInsightButton")?.addEventListener("click", runMoreInsightSearch);
+}
+
+function setActiveInsightButton() {
+  document.querySelectorAll("[data-insight-view]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.insightView === activeInsightView);
+  });
+}
+
+function renderInsightList(items, options = {}) {
+  const list = document.querySelector("#insightList");
+  if (!list) return;
+  if (!items.length) {
+    list.textContent = options.emptyText || "暂无 Insight";
+    return;
+  }
+  list.innerHTML = items.map((item) => renderInsightItem(item, options)).join("");
+  bindInsightItemControls();
+}
+
+function bindInsightItemControls() {
+  const list = document.querySelector("#insightList");
+  if (!list) return;
+  list.querySelectorAll("[data-insight-read]").forEach((input) => {
+    input.addEventListener("change", () => {
+      readInsights[input.dataset.insightRead] = input.checked;
+      localStorage.setItem("mimic-read-insights", JSON.stringify(readInsights));
+      renderOverview();
+    });
+  });
+  list.querySelectorAll("[data-insight-favorite]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.insightFavorite;
+      favoriteInsights[id] = !favoriteInsights[id];
+      localStorage.setItem("mimic-favorite-insights", JSON.stringify(favoriteInsights));
+      button.textContent = favoriteInsights[id] ? "★" : "☆";
+      button.setAttribute("aria-pressed", String(Boolean(favoriteInsights[id])));
+      renderOverview();
+      if (activeInsightView === "saved" && !favoriteInsights[id]) renderSavedInsights();
+    });
+  });
+}
+
+function renderInsightHistory() {
+  const groups = Object.entries(insightLibrary?.days || {})
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([dateKey, items]) => `
+      <section class="insight-history-group">
+        <h3>${dateKey}</h3>
+        ${items.map((item) => renderInsightItem(item)).join("")}
+      </section>
+    `)
+    .join("");
+  const list = document.querySelector("#insightList");
+  if (!list) return;
+  list.innerHTML = groups || "暂无历史 Insight";
+  bindInsightItemControls();
+}
+
+function renderSavedInsights() {
+  const saved = getAllInsightItems().filter((item) => favoriteInsights[item.id]);
+  renderInsightList(saved, { emptyText: "暂无收藏" });
+}
+
+function runMoreInsightSearch() {
+  const button = document.querySelector("#moreInsightButton");
+  const list = document.querySelector("#insightList");
+  if (!button || !list || moreInsightLoaded) return;
+  activeInsightView = "today";
+  setActiveInsightButton();
+  button.disabled = true;
+  list.insertAdjacentHTML("beforeend", `<article class="insight-loading" aria-live="polite"><span></span></article>`);
+  window.setTimeout(() => {
+    const loading = list.querySelector(".insight-loading");
+    const moreItems = insightLibrary?.moreSearch?.[todayKey] || insightLibrary?.moreSearch?.default || [];
+    moreInsightLoaded = true;
+    currentInsightItems = [...currentInsightItems, ...moreItems];
+    if (loading) loading.remove();
+    renderInsightList(currentInsightItems);
+    button.disabled = false;
+  }, 900);
+}
+
+function getAllInsightItems() {
+  const dayItems = Object.entries(insightLibrary?.days || {})
+    .sort(([a], [b]) => b.localeCompare(a))
+    .flatMap(([, items]) => items);
+  const moreItems = Object.values(insightLibrary?.moreSearch || {}).flatMap((items) => items);
+  const byId = new Map([...dayItems, ...moreItems].map((item) => [item.id, item]));
+  return [...byId.values()];
 }
 
 function renderInsightItem(item) {

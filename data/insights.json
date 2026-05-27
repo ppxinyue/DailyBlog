@@ -89,6 +89,62 @@
       "url": "https://www.tesla.com/AI"
     }
   ],
+  "moreSearch": {
+    "2026-05-27": [
+      {
+        "id": "insight-more-20260527-001",
+        "title": "Claude agent containment discussion",
+        "sourceName": "Anthropic / Technical community",
+        "sourceType": "expanded-search",
+        "publishedAt": "2026-05-26",
+        "url": "https://www.anthropic.com/engineering",
+        "tags": ["anthropic", "agent-containment", "memory-safety", "tool-use"],
+        "zhSummary": "围绕 Claude agent containment 的技术讨论把记忆污染、工具隔离和多 agent 信任升级放到工程实践层面。",
+        "starSummary": {
+          "situation": "agent 越来越多地接触长期记忆、工具和其他 agent，攻击面从 prompt 扩大到系统边界。",
+          "task": "识别哪些边界需要被测试：记忆写入、工具权限、agent 间信任和异常回滚。",
+          "action": "把 containment 讨论拆成可复现的安全评测任务，并比较不同产品框架的默认行为。",
+          "result": "agent 评测应覆盖边界保持能力，而不是只评估回答质量。"
+        },
+        "whyItMatters": "这能补充主列表中的 Anthropic 技术趋势，帮助把社区热议转成具体评测用例。"
+      },
+      {
+        "id": "insight-more-20260527-002",
+        "title": "AI agents and user trust calibration in sensitive products",
+        "sourceName": "Industry research watchlist",
+        "sourceType": "expanded-search",
+        "publishedAt": "2026-05-27",
+        "url": "https://www.microsoft.com/en-us/research/research-area/artificial-intelligence/",
+        "tags": ["trust-calibration", "mental-health-ai", "education-ai", "agent-evaluation"],
+        "zhSummary": "敏感场景中的 agent 评测需要检查用户是否过度信任、是否理解系统边界，以及系统是否在危机或不确定场景中正确转介。",
+        "starSummary": {
+          "situation": "教育、儿童和心理健康产品容易让用户把持续回应误认为稳定理解和可靠陪伴。",
+          "task": "评估用户信任是否被正确校准，而不是只看满意度和留存。",
+          "action": "加入不确定性表达、危机转介、家长/教师在环和错误恢复任务。",
+          "result": "可以把 cognitive neuroscience 的信心校准和心理健康安全边界转成产品指标。"
+        },
+        "whyItMatters": "它把你的专业方向和实际 AI 产品评测连接起来，尤其适合设计敏感人群场景的 agent benchmark。"
+      },
+      {
+        "id": "insight-more-20260527-003",
+        "title": "Forum trend: small agent frameworks compete on tool reliability",
+        "sourceName": "Hacker News / GitHub trend watch",
+        "sourceType": "expanded-search",
+        "publishedAt": "2026-05-27",
+        "url": "https://github.com/trending",
+        "tags": ["technical-forum", "github-trending", "tool-reliability", "agent-frameworks"],
+        "zhSummary": "开发者社区对轻量 agent 框架的关注常集中在工具调用可靠性、状态管理、日志、回滚和评测自动化，而不只是模型本身。",
+        "starSummary": {
+          "situation": "开源 agent 项目快速变化，很多真实问题先出现在 issue、demo 和论坛讨论中。",
+          "task": "从热门项目中筛出和你研究相关的工程信号，而不是追逐所有新框架。",
+          "action": "优先看工具调用失败、状态污染、长程任务中断和评测脚本设计。",
+          "result": "论坛与 GitHub 热点可作为每日 Insight 的工程侧早期预警。"
+        },
+        "whyItMatters": "它解释为什么每日 Insight 要跟踪论坛和 GitHub：这些信号能提前暴露真实落地约束。"
+      }
+    ],
+    "default": []
+  },
   "days": {
     "2026-05-27": [
       {

@@ -29,3 +29,4 @@
 18. Keep Insight as the first content module under the calendar/statistics overview.
 19. Keep the calendar lightweight and paired with a compact statistics panel.
 20. Keep the calendar in the left half of the overview and show lightweight statistic charts on the right.
+21. Add Insight history, saved-item view, and a More interaction with loading state and expanded result rendering.
