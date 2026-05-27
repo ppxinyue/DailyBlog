@@ -40,3 +40,4 @@
 29. Restyle Blog as a blue-and-cream poster layout with brain and AI graphics.
 30. Remove text from the Blog poster hero so only brain and AI icons remain.
 31. Lighten the Blog page by widening the editor, reducing type and padding, moving export controls below the writing area, and replacing the AI icon with a robot.
+32. Slightly narrow the Blog editor and increase the title and body input font sizes by 6px.
