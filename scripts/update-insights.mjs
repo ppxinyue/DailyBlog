@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 const ROOT = new URL("../", import.meta.url);
 const insightsPath = new URL("data/insights.json", ROOT);
 const maxItems = Number(process.env.DAILYBLOG_INSIGHT_MAX_ITEMS || 4);
+const maxMoreItems = Number(process.env.DAILYBLOG_INSIGHT_MORE_ITEMS || 4);
 const force = process.env.DAILYBLOG_INSIGHT_FORCE === "1";
 const dryRun = process.env.DAILYBLOG_INSIGHT_DRY_RUN === "1";
 const shouldCommit = process.env.DAILYBLOG_INSIGHT_COMMIT === "1";
@@ -115,18 +116,15 @@ async function main() {
   await inspectContext();
   const library = JSON.parse(await fs.readFile(insightsPath, "utf8"));
 
-  if (library.days?.[todayKey]?.length && !force) {
-    console.log(`Insight for ${todayKey} already exists. Set DAILYBLOG_INSIGHT_FORCE=1 to overwrite.`);
+  const hasTodayInsights = Boolean(library.days?.[todayKey]?.length);
+  const hasTodayMore = Boolean(library.moreSearch?.[todayKey]?.length);
+  if (hasTodayInsights && hasTodayMore && !force) {
+    console.log(`Insight and More results for ${todayKey} already exist. Set DAILYBLOG_INSIGHT_FORCE=1 to overwrite.`);
     runCheck();
     return;
   }
 
-  const existingUrls = new Set(
-    Object.values(library.days || {})
-      .flatMap((items) => items || [])
-      .map((item) => normalizeUrl(item.url))
-      .filter(Boolean)
-  );
+  const existingUrls = collectExistingUrls(library, { excludeToday: force });
 
   const candidates = await collectCandidates();
   const selected = selectCandidates(candidates, existingUrls);
@@ -134,16 +132,25 @@ async function main() {
     throw new Error("No non-duplicate AI-industry-centered Insight candidates were found.");
   }
 
-  const insights = selected.slice(0, maxItems).map((candidate, index) => buildInsight(candidate, index));
+  const insights = hasTodayInsights && !force
+    ? library.days[todayKey]
+    : selected.slice(0, maxItems).map((candidate, index) => buildInsight(candidate, index));
+  const usedDailyUrls = new Set(insights.map((item) => normalizeUrl(item.url)));
+  const moreInsights = selected
+    .filter((candidate) => !usedDailyUrls.has(normalizeUrl(candidate.url)))
+    .slice(0, maxMoreItems)
+    .map((candidate, index) => buildInsight(candidate, index, { more: true }));
 
   if (dryRun) {
-    console.log(JSON.stringify({ date: todayKey, insights }, null, 2));
+    console.log(JSON.stringify({ date: todayKey, insights, moreSearch: moreInsights }, null, 2));
     return;
   }
 
   library.generatedAt = `${todayKey}T00:00:00+08:00`;
   library.days ||= {};
   library.days[todayKey] = insights;
+  library.moreSearch ||= {};
+  library.moreSearch[todayKey] = moreInsights;
   await fs.writeFile(insightsPath, `${JSON.stringify(library, null, 2)}\n`);
   runCheck();
 
@@ -153,7 +160,21 @@ async function main() {
   }
   if (shouldPush) run("git", ["push"]);
 
-  console.log(`Updated ${todayKey} with ${library.days[todayKey].length} Insight item(s).`);
+  console.log(`Updated ${todayKey} with ${library.days[todayKey].length} Insight item(s) and ${library.moreSearch[todayKey].length} More item(s).`);
+}
+
+function collectExistingUrls(library, options = {}) {
+  const urls = [];
+  for (const [dateKey, items] of Object.entries(library.days || {})) {
+    if (options.excludeToday && dateKey === todayKey) continue;
+    urls.push(...(items || []).map((item) => item.url));
+  }
+  for (const [dateKey, items] of Object.entries(library.moreSearch || {})) {
+    if (dateKey === "default") continue;
+    if (options.excludeToday && dateKey === todayKey) continue;
+    urls.push(...(items || []).map((item) => item.url));
+  }
+  return new Set(urls.map((url) => normalizeUrl(url)).filter(Boolean));
 }
 
 async function inspectContext() {
@@ -286,11 +307,11 @@ function selectCandidates(candidates, existingUrls) {
     .sort((a, b) => b.score - a.score);
 }
 
-function buildInsight(candidate, index) {
+function buildInsight(candidate, index, options = {}) {
   const tags = candidate.tags;
   const focus = primaryFocus(tags);
   return {
-    id: `insight-${compactDate}-${String(index + 1).padStart(3, "0")}`,
+    id: `${options.more ? "insight-more" : "insight"}-${compactDate}-${String(index + 1).padStart(3, "0")}`,
     title: candidate.title,
     sourceName: candidate.sourceName,
     sourceType: candidate.sourceType,

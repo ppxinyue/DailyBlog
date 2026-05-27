@@ -93,3 +93,4 @@
 - Added a `server.py` startup Insight hook: it validates existing `data/insights.json` by default and can run a configured `DAILYBLOG_INSIGHT_UPDATE_CMD` before serving localhost.
 - Added `scripts/update-insights.mjs` as the local Daily Insight updater derived from the earlier `daily-insight-refresh` automation prompt.
 - Changed server startup to run `node scripts/update-insights.mjs` by default; the script skips existing same-day entries unless `DAILYBLOG_INSIGHT_FORCE=1` is set.
+- Extended the Insight updater to populate `moreSearch[date]` so the frontend More button uses the same daily source-selection run.
