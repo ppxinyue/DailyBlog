@@ -41,3 +41,7 @@
 30. Remove text from the Blog poster hero so only brain and AI icons remain.
 31. Lighten the Blog page by widening the editor, reducing type and padding, moving export controls below the writing area, and replacing the AI icon with a robot.
 32. Slightly narrow the Blog editor and increase the title and body input font sizes by 6px.
+33. Use GitHub Pages as the read-only published site while localhost acts as the writable editing environment.
+34. Persist writable user state in `data/user-data.json` through the local server instead of relying only on browser `localStorage`.
+35. Let localhost save actions commit and push data changes so GitHub Pages republishes the latest blog, favorites, notes, and completion state.
+36. Keep Insight generation as a local write workflow: update `data/insights.json` locally, then commit/push it for Pages to display.

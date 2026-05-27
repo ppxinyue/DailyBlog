@@ -83,3 +83,7 @@
 - Lightened the Blog writing layout: expanded the editor width, reduced title/body font sizes and padding, moved export/stash/save controls below the writing area, and changed the AI chip to a robot icon without the orbit circle.
 - Slightly narrowed the Blog editor and increased the title input to 22px and writing surface to 18px.
 - Updated the local static server to send no-cache headers and restarted `127.0.0.1:4174` so external browsers receive the latest files.
+- Added `data/user-data.json` as the repository-backed store for notes, completions, Insight read/favorite state, Blog posts, and Blog drafts.
+- Extended `server.py` with localhost-only write APIs for user data, Insight data, and Git publish operations.
+- Updated the frontend to load state from `/api/user-data` on localhost and from `data/user-data.json` on GitHub Pages, with `localStorage` retained as a browser fallback/migration source.
+- Changed localhost save flows so Todo notes/checks, Insight reads/favorites, and saved Blog posts can write local JSON and trigger Git commit/push for GitHub Pages refreshes.

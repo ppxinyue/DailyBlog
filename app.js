@@ -1,43 +1,166 @@
 const today = new Date();
 const todayKey = toDateKey(today);
-const notes = JSON.parse(localStorage.getItem("mimic-daily-notes") || "{}");
-const completions = JSON.parse(localStorage.getItem("mimic-daily-completions") || "{}");
-const readInsights = JSON.parse(localStorage.getItem("mimic-read-insights") || "{}");
-const favoriteInsights = JSON.parse(localStorage.getItem("mimic-favorite-insights") || "{}");
-const blogPosts = JSON.parse(localStorage.getItem("mimic-blog-posts") || "{}");
-const blogDrafts = JSON.parse(localStorage.getItem("mimic-blog-drafts") || "{}");
-const blogTitles = JSON.parse(localStorage.getItem("mimic-blog-titles") || "{}");
-const blogTitleDrafts = JSON.parse(localStorage.getItem("mimic-blog-title-drafts") || "{}");
+const localStorageKeys = {
+  notes: "mimic-daily-notes",
+  completions: "mimic-daily-completions",
+  readInsights: "mimic-read-insights",
+  favoriteInsights: "mimic-favorite-insights",
+  blogPosts: "mimic-blog-posts",
+  blogDrafts: "mimic-blog-drafts",
+  blogTitles: "mimic-blog-titles",
+  blogTitleDrafts: "mimic-blog-title-drafts"
+};
+let notes = {};
+let completions = {};
+let readInsights = {};
+let favoriteInsights = {};
+let blogPosts = {};
+let blogDrafts = {};
+let blogTitles = {};
+let blogTitleDrafts = {};
 let insightLibrary = null;
 let currentInsightItems = [];
 let activeInsightView = "today";
 let moreInsightLoaded = false;
 let currentBlogDate = todayKey;
+let localDataWritable = false;
+let stateSaveTimer = 0;
 
-document.querySelectorAll("[data-note]").forEach((input) => {
-  const key = `${todayKey}:${input.dataset.note}`;
-  input.value = notes[key] || "";
-  input.addEventListener("input", () => {
-    notes[key] = input.value;
-    localStorage.setItem("mimic-daily-notes", JSON.stringify(notes));
+initApp();
+
+async function initApp() {
+  await loadUserData();
+  bindDailyInputs();
+  renderOverview();
+  renderInsights();
+  bindViewSwitch();
+  bindBlogEditor();
+  bindBlogExport();
+}
+
+async function loadUserData() {
+  const localFallback = readLocalStorageState();
+  const sourceUrl = isLocalHost() ? "/api/user-data" : "./data/user-data.json";
+  try {
+    const response = await fetch(sourceUrl, { cache: "no-cache" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    applyUserData(isLocalHost() ? mergeUserData(localFallback, data) : mergeUserData({}, data));
+    localDataWritable = isLocalHost() && sourceUrl === "/api/user-data";
+  } catch {
+    applyUserData(localFallback);
+    localDataWritable = false;
+  }
+  writeLocalStorageState();
+}
+
+function bindDailyInputs() {
+  document.querySelectorAll("[data-note]").forEach((input) => {
+    const key = `${todayKey}:${input.dataset.note}`;
+    input.value = notes[key] || "";
+    input.addEventListener("input", () => {
+      notes[key] = input.value;
+      scheduleUserDataSave({ publish: true, message: "Update DailyBlog todo notes" });
+    });
   });
-});
 
-document.querySelectorAll("[data-complete]").forEach((input) => {
-  const key = `${todayKey}:${input.dataset.complete}`;
-  input.checked = Boolean(completions[key]);
-  input.addEventListener("change", () => {
-    completions[key] = input.checked;
-    localStorage.setItem("mimic-daily-completions", JSON.stringify(completions));
-    renderOverview();
+  document.querySelectorAll("[data-complete]").forEach((input) => {
+    const key = `${todayKey}:${input.dataset.complete}`;
+    input.checked = Boolean(completions[key]);
+    input.addEventListener("change", () => {
+      completions[key] = input.checked;
+      scheduleUserDataSave({ publish: true, message: "Update DailyBlog completions" });
+      renderOverview();
+    });
   });
-});
+}
 
-renderOverview();
-renderInsights();
-bindViewSwitch();
-bindBlogEditor();
-bindBlogExport();
+function readLocalStorageState() {
+  return Object.fromEntries(
+    Object.entries(localStorageKeys).map(([key, storageKey]) => [key, readStorageObject(storageKey)])
+  );
+}
+
+function readStorageObject(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function applyUserData(data) {
+  notes = data.notes || {};
+  completions = data.completions || {};
+  readInsights = data.readInsights || {};
+  favoriteInsights = data.favoriteInsights || {};
+  blogPosts = data.blogPosts || {};
+  blogDrafts = data.blogDrafts || {};
+  blogTitles = data.blogTitles || {};
+  blogTitleDrafts = data.blogTitleDrafts || {};
+}
+
+function mergeUserData(localData, remoteData) {
+  const merged = {};
+  for (const key of Object.keys(localStorageKeys)) {
+    merged[key] = { ...(remoteData?.[key] || {}), ...(localData?.[key] || {}) };
+  }
+  return merged;
+}
+
+function getUserDataSnapshot() {
+  return {
+    version: 1,
+    notes,
+    completions,
+    readInsights,
+    favoriteInsights,
+    blogPosts,
+    blogDrafts,
+    blogTitles,
+    blogTitleDrafts
+  };
+}
+
+function writeLocalStorageState() {
+  for (const [key, storageKey] of Object.entries(localStorageKeys)) {
+    localStorage.setItem(storageKey, JSON.stringify(getUserDataSnapshot()[key] || {}));
+  }
+}
+
+function scheduleUserDataSave(options = {}) {
+  writeLocalStorageState();
+  window.clearTimeout(stateSaveTimer);
+  stateSaveTimer = window.setTimeout(() => saveUserData(options), options.publish ? 1200 : 500);
+}
+
+async function saveUserData(options = {}) {
+  writeLocalStorageState();
+  if (!localDataWritable) return { ok: false, offline: true };
+  try {
+    const response = await fetch("/api/user-data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: getUserDataSnapshot(),
+        publish: Boolean(options.publish),
+        message: options.message || "Update DailyBlog data"
+      })
+    });
+    const result = await response.json();
+    if (!response.ok || result.publish?.ok === false) {
+      throw new Error(result.publish?.stderr || result.stderr || "Save failed");
+    }
+    return result;
+  } catch (error) {
+    setBlogSaveStatus(`Local save failed: ${error.message}`);
+    return { ok: false, error };
+  }
+}
+
+function isLocalHost() {
+  return ["localhost", "127.0.0.1"].includes(window.location.hostname);
+}
 
 async function renderInsights() {
   const list = document.querySelector("#insightList");
@@ -111,7 +234,7 @@ function bindInsightItemControls() {
   list.querySelectorAll("[data-insight-read]").forEach((input) => {
     input.addEventListener("change", () => {
       readInsights[input.dataset.insightRead] = input.checked;
-      localStorage.setItem("mimic-read-insights", JSON.stringify(readInsights));
+      scheduleUserDataSave({ publish: true, message: "Update DailyBlog insight reads" });
       renderOverview();
     });
   });
@@ -119,7 +242,7 @@ function bindInsightItemControls() {
     button.addEventListener("click", () => {
       const id = button.dataset.insightFavorite;
       favoriteInsights[id] = !favoriteInsights[id];
-      localStorage.setItem("mimic-favorite-insights", JSON.stringify(favoriteInsights));
+      scheduleUserDataSave({ publish: true, message: "Update DailyBlog insight favorites" });
       button.textContent = favoriteInsights[id] ? "★" : "☆";
       button.setAttribute("aria-pressed", String(Boolean(favoriteInsights[id])));
       renderOverview();
@@ -303,13 +426,13 @@ function bindBlogEditor() {
   if (titleInput) titleInput.value = getBlogTitle(currentBlogDate);
   editor.addEventListener("input", () => {
     blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
-    localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+    scheduleUserDataSave({ publish: false, message: "Update DailyBlog blog draft" });
     setBlogSaveStatus("Drafting");
     renderBlog();
   });
   titleInput?.addEventListener("input", () => {
     blogTitleDrafts[currentBlogDate] = titleInput.value;
-    localStorage.setItem("mimic-blog-title-drafts", JSON.stringify(blogTitleDrafts));
+    scheduleUserDataSave({ publish: false, message: "Update DailyBlog blog draft" });
     setBlogSaveStatus("Drafting");
     renderBlog();
   });
@@ -509,9 +632,10 @@ function bindBlogSaveActions() {
     if (!editor) return;
     blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
     blogTitleDrafts[currentBlogDate] = titleInput?.value || "";
-    localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
-    localStorage.setItem("mimic-blog-title-drafts", JSON.stringify(blogTitleDrafts));
-    setBlogSaveStatus("Draft stashed");
+    setBlogSaveStatus("Stashing...");
+    saveUserData({ publish: false, message: "Update DailyBlog blog draft" }).then((result) => {
+      setBlogSaveStatus(result.ok ? "Draft stashed" : "Draft stashed locally");
+    });
     renderBlog();
   });
 
@@ -525,11 +649,10 @@ function bindBlogSaveActions() {
     blogDrafts[currentBlogDate] = content;
     blogTitles[currentBlogDate] = title;
     blogTitleDrafts[currentBlogDate] = title;
-    localStorage.setItem("mimic-blog-posts", JSON.stringify(blogPosts));
-    localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
-    localStorage.setItem("mimic-blog-titles", JSON.stringify(blogTitles));
-    localStorage.setItem("mimic-blog-title-drafts", JSON.stringify(blogTitleDrafts));
-    setBlogSaveStatus("Saved");
+    setBlogSaveStatus("Publishing...");
+    saveUserData({ publish: true, message: `Publish DailyBlog post ${currentBlogDate}` }).then((result) => {
+      setBlogSaveStatus(result.ok ? "Saved and pushed" : "Saved locally");
+    });
     renderBlog();
   });
 }
@@ -551,7 +674,7 @@ function applyBlogFormat(button) {
   }
 
   blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
-  localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+  scheduleUserDataSave({ publish: false, message: "Update DailyBlog blog draft" });
   setBlogSaveStatus("Drafting");
   renderBlog();
 }
