@@ -94,3 +94,4 @@
 - Added `scripts/update-insights.mjs` as the local Daily Insight updater derived from the earlier `daily-insight-refresh` automation prompt.
 - Changed server startup to run `node scripts/update-insights.mjs` by default; the script skips existing same-day entries unless `DAILYBLOG_INSIGHT_FORCE=1` is set.
 - Extended the Insight updater to populate `moreSearch[date]` so the frontend More button uses the same daily source-selection run.
+- Changed the Insight More button to page through the More pool across repeated clicks, with `updatePolicy.morePageSize` controlling batch size.

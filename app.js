@@ -21,7 +21,7 @@ let blogTitleDrafts = {};
 let insightLibrary = null;
 let currentInsightItems = [];
 let activeInsightView = "today";
-let moreInsightLoaded = false;
+let moreInsightCursor = 0;
 let currentBlogDate = todayKey;
 let localDataWritable = false;
 
@@ -194,7 +194,7 @@ function bindInsightActions() {
   document.querySelectorAll("[data-insight-view]").forEach((button) => {
     button.addEventListener("click", () => {
       activeInsightView = button.dataset.insightView;
-      moreInsightLoaded = false;
+      moreInsightCursor = 0;
       if (activeInsightView === "history") renderInsightHistory();
       if (activeInsightView === "saved") renderSavedInsights();
       setActiveInsightButton();
@@ -268,20 +268,47 @@ function renderSavedInsights() {
 function runMoreInsightSearch() {
   const button = document.querySelector("#moreInsightButton");
   const list = document.querySelector("#insightList");
-  if (!button || !list || moreInsightLoaded) return;
+  if (!button || !list) return;
   activeInsightView = "today";
   setActiveInsightButton();
   button.disabled = true;
   list.insertAdjacentHTML("beforeend", `<article class="insight-loading" aria-live="polite"><span></span></article>`);
   window.setTimeout(() => {
     const loading = list.querySelector(".insight-loading");
-    const moreItems = insightLibrary?.moreSearch?.[todayKey] || insightLibrary?.moreSearch?.default || [];
-    moreInsightLoaded = true;
-    currentInsightItems = [...currentInsightItems, ...moreItems];
+    const moreItems = getMoreInsightPool();
+    const pageSize = getMoreInsightPageSize();
+    const nextItems = moreItems.slice(moreInsightCursor, moreInsightCursor + pageSize);
+    moreInsightCursor += nextItems.length;
+    currentInsightItems = mergeInsightItems(currentInsightItems, nextItems);
     if (loading) loading.remove();
-    renderInsightList(currentInsightItems);
-    button.disabled = false;
+    renderInsightList(currentInsightItems, { emptyText: "暂无更多 Insight" });
+    if (!nextItems.length || moreInsightCursor >= moreItems.length) {
+      button.textContent = "No more";
+      button.disabled = true;
+      if (!nextItems.length) {
+        list.insertAdjacentHTML("beforeend", `<article class="insight-item">暂无更多 Insight</article>`);
+      }
+    } else {
+      button.textContent = `More (${moreItems.length - moreInsightCursor})`;
+      button.disabled = false;
+    }
   }, 900);
+}
+
+function getMoreInsightPool() {
+  return insightLibrary?.moreSearch?.[todayKey] || insightLibrary?.moreSearch?.default || [];
+}
+
+function getMoreInsightPageSize() {
+  return Math.max(1, Number(insightLibrary?.updatePolicy?.morePageSize || 3));
+}
+
+function mergeInsightItems(items, nextItems) {
+  const byId = new Map(items.map((item) => [item.id, item]));
+  nextItems.forEach((item) => {
+    if (!byId.has(item.id)) byId.set(item.id, item);
+  });
+  return [...byId.values()];
 }
 
 function getAllInsightItems() {

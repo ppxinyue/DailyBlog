@@ -50,3 +50,4 @@
 39. Start local editing through `scripts/start-local.sh`, which runs the single required localhost server.
 40. Run the Insight startup hook when `server.py` starts: execute `scripts/update-insights.mjs` by default, or execute `DAILYBLOG_INSIGHT_UPDATE_CMD` when an alternate updater is configured.
 41. Generate both daily Insight cards and the same-date `moreSearch` expansion pool so the More button is backed by repository data.
+42. Let the More button paginate through `moreSearch[date]` across repeated clicks instead of exhausting the pool on the first click.

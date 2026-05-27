@@ -4,7 +4,8 @@ import { spawnSync } from "node:child_process";
 const ROOT = new URL("../", import.meta.url);
 const insightsPath = new URL("data/insights.json", ROOT);
 const maxItems = Number(process.env.DAILYBLOG_INSIGHT_MAX_ITEMS || 4);
-const maxMoreItems = Number(process.env.DAILYBLOG_INSIGHT_MORE_ITEMS || 4);
+const maxMoreItems = Number(process.env.DAILYBLOG_INSIGHT_MORE_ITEMS || 12);
+const morePageSize = Number(process.env.DAILYBLOG_INSIGHT_MORE_PAGE_SIZE || 3);
 const force = process.env.DAILYBLOG_INSIGHT_FORCE === "1";
 const dryRun = process.env.DAILYBLOG_INSIGHT_DRY_RUN === "1";
 const shouldCommit = process.env.DAILYBLOG_INSIGHT_COMMIT === "1";
@@ -147,6 +148,8 @@ async function main() {
   }
 
   library.generatedAt = `${todayKey}T00:00:00+08:00`;
+  library.updatePolicy ||= {};
+  library.updatePolicy.morePageSize = morePageSize;
   library.days ||= {};
   library.days[todayKey] = insights;
   library.moreSearch ||= {};
