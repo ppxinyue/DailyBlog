@@ -237,47 +237,21 @@ body {
 }
 
 .blog-view {
-  background:
-    radial-gradient(circle at 12% 22%, rgb(255 255 255 / 0.3) 0 80px, transparent 82px),
-    linear-gradient(180deg, #9ab6ee, #8faee9);
+  background: linear-gradient(180deg, #9ab6ee, #8faee9);
   border: 0;
-  border-radius: 0;
-  box-shadow: none;
+  border-radius: 28px;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.06);
   display: grid;
-  gap: 18px;
-  margin: -8px auto 0;
-  max-width: 1280px;
-  padding: 6px;
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 8px;
   position: relative;
-  width: 100%;
+  width: calc(100% - 36px);
 }
 
 .blog-view::before,
 .blog-view::after {
-  border-radius: 999px;
-  content: "";
-  pointer-events: none;
-  position: absolute;
-}
-
-.blog-view::before {
-  background-image: radial-gradient(#5f86df 1px, transparent 1px);
-  background-size: 12px 12px;
-  height: 220px;
-  left: 72px;
-  opacity: 0.22;
-  top: 72px;
-  width: 220px;
-}
-
-.blog-view::after {
-  background: #5f86df;
-  border-radius: 50%;
-  bottom: 80px;
-  height: 86px;
-  opacity: 0.16;
-  right: 92px;
-  width: 86px;
+  display: none;
 }
 
 .blog-editor {
@@ -287,16 +261,16 @@ body {
     #fff9ef;
   background-size: 18px 18px, 26px 26px, auto;
   border: 1px solid rgb(95 134 223 / 0.34);
-  border-radius: 30px;
-  box-shadow: 0 24px 60px rgb(54 84 145 / 0.18);
+  border-radius: 22px;
+  box-shadow: none;
   display: grid;
   gap: 12px;
-  min-height: 72vh;
+  min-height: 86vh;
   margin: 0 auto;
-  max-width: 1120px;
-  padding: clamp(12px, 2vw, 24px);
+  max-width: none;
+  padding: 18px;
   position: relative;
-  width: calc(100% - 24px);
+  width: 100%;
   z-index: 1;
 }
 
@@ -477,7 +451,7 @@ body {
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.55;
-  min-height: 52vh;
+  min-height: 64vh;
   padding: 12px;
   tab-size: 2;
 }
@@ -874,16 +848,21 @@ textarea:focus,
 
   .blog-view,
   .blog-editor {
-    border-radius: 22px;
+    border-radius: 20px;
+  }
+
+  .blog-view {
+    padding: 6px;
+    width: calc(100% - 24px);
   }
 
   .blog-editor {
-    min-height: 72vh;
+    min-height: 88vh;
     padding: 10px;
   }
 
   .blog-writing-surface {
-    min-height: 50vh;
+    min-height: 66vh;
     padding: 10px;
   }
 
