@@ -6,6 +6,8 @@ const readInsights = JSON.parse(localStorage.getItem("mimic-read-insights") || "
 const favoriteInsights = JSON.parse(localStorage.getItem("mimic-favorite-insights") || "{}");
 const blogPosts = JSON.parse(localStorage.getItem("mimic-blog-posts") || "{}");
 const blogDrafts = JSON.parse(localStorage.getItem("mimic-blog-drafts") || "{}");
+const blogTitles = JSON.parse(localStorage.getItem("mimic-blog-titles") || "{}");
+const blogTitleDrafts = JSON.parse(localStorage.getItem("mimic-blog-title-drafts") || "{}");
 let insightLibrary = null;
 let currentInsightItems = [];
 let activeInsightView = "today";
@@ -295,11 +297,19 @@ function setAppView(view) {
 
 function bindBlogEditor() {
   const editor = document.querySelector("#blogEditor");
+  const titleInput = document.querySelector("#blogTitle");
   if (!editor) return;
   setBlogEditorContent(editor, getBlogEditorContent(currentBlogDate));
+  if (titleInput) titleInput.value = getBlogTitle(currentBlogDate);
   editor.addEventListener("input", () => {
     blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
     localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+    setBlogSaveStatus("Drafting");
+    renderBlog();
+  });
+  titleInput?.addEventListener("input", () => {
+    blogTitleDrafts[currentBlogDate] = titleInput.value;
+    localStorage.setItem("mimic-blog-title-drafts", JSON.stringify(blogTitleDrafts));
     setBlogSaveStatus("Drafting");
     renderBlog();
   });
@@ -311,7 +321,11 @@ function bindBlogEditor() {
 function renderBlog() {
   const stats = document.querySelector("#blogWordStats");
   const archive = document.querySelector("#blogArchive");
+  const dateLabel = document.querySelector("#blogDateLabel");
+  const weekdayLabel = document.querySelector("#blogWeekdayLabel");
   if (!stats || !archive) return;
+  if (dateLabel) dateLabel.textContent = formatBlogDate(currentBlogDate);
+  if (weekdayLabel) weekdayLabel.textContent = formatBlogWeekday(currentBlogDate);
   const editor = document.querySelector("#blogEditor");
   const content = editor ? getBlogEditorValue(editor) : getBlogEditorContent(currentBlogDate);
   const count = countBlogText(content);
@@ -321,7 +335,9 @@ function renderBlog() {
     button.addEventListener("click", () => {
       currentBlogDate = button.dataset.blogDate;
       const editor = document.querySelector("#blogEditor");
+      const titleInput = document.querySelector("#blogTitle");
       if (editor) setBlogEditorContent(editor, getBlogEditorContent(currentBlogDate));
+      if (titleInput) titleInput.value = getBlogTitle(currentBlogDate);
       setBlogSaveStatus(blogDrafts[currentBlogDate] ? "Draft loaded" : "Saved loaded");
       renderBlog();
     });
@@ -392,11 +408,11 @@ function renderBlogBlock(block) {
 
 function renderBlogArchive() {
   const entries = Object.entries(blogPosts)
-    .filter(([, content]) => content.trim())
+    .filter(([dateKey, content]) => content.trim() || getBlogTitle(dateKey).trim())
     .sort(([a], [b]) => b.localeCompare(a));
   if (!entries.length) return `<span class="archive-empty">No posts</span>`;
   return entries.map(([dateKey, content]) => {
-    const title = parseBlogContent(content).title || "Untitled";
+    const title = getBlogTitle(dateKey) || parseBlogContent(content).title || "Untitled";
     return `<button type="button" data-blog-date="${dateKey}" class="${dateKey === currentBlogDate ? "is-active" : ""}"><span>${dateKey}</span>${escapeHtml(title)}</button>`;
   }).join("");
 }
@@ -415,6 +431,10 @@ function countBlogText(content) {
 
 function getBlogEditorContent(dateKey) {
   return blogDrafts[dateKey] || blogPosts[dateKey] || "";
+}
+
+function getBlogTitle(dateKey) {
+  return blogTitleDrafts[dateKey] || blogTitles[dateKey] || "";
 }
 
 function getBlogEditorValue(editor) {
@@ -485,21 +505,30 @@ function bindBlogToolbar() {
 function bindBlogSaveActions() {
   document.querySelector("#stashBlogDraft")?.addEventListener("click", () => {
     const editor = document.querySelector("#blogEditor");
+    const titleInput = document.querySelector("#blogTitle");
     if (!editor) return;
     blogDrafts[currentBlogDate] = getBlogEditorValue(editor);
+    blogTitleDrafts[currentBlogDate] = titleInput?.value || "";
     localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+    localStorage.setItem("mimic-blog-title-drafts", JSON.stringify(blogTitleDrafts));
     setBlogSaveStatus("Draft stashed");
     renderBlog();
   });
 
   document.querySelector("#saveBlogPost")?.addEventListener("click", () => {
     const editor = document.querySelector("#blogEditor");
+    const titleInput = document.querySelector("#blogTitle");
     if (!editor) return;
     const content = getBlogEditorValue(editor);
+    const title = titleInput?.value || "";
     blogPosts[currentBlogDate] = content;
     blogDrafts[currentBlogDate] = content;
+    blogTitles[currentBlogDate] = title;
+    blogTitleDrafts[currentBlogDate] = title;
     localStorage.setItem("mimic-blog-posts", JSON.stringify(blogPosts));
     localStorage.setItem("mimic-blog-drafts", JSON.stringify(blogDrafts));
+    localStorage.setItem("mimic-blog-titles", JSON.stringify(blogTitles));
+    localStorage.setItem("mimic-blog-title-drafts", JSON.stringify(blogTitleDrafts));
     setBlogSaveStatus("Saved");
     renderBlog();
   });
@@ -555,6 +584,7 @@ async function exportBlogPngSeries() {
   const editor = document.querySelector("#blogEditor");
   const content = editor ? getBlogEditorValue(editor) : getBlogEditorContent(currentBlogDate);
   const parsed = parseBlogContent(content);
+  parsed.title = getBlogTitle(currentBlogDate) || parsed.title;
   if (button) button.disabled = true;
   if (status) status.textContent = "Rendering...";
 
@@ -569,6 +599,16 @@ async function exportBlogPngSeries() {
   } finally {
     if (button) button.disabled = false;
   }
+}
+
+function formatBlogDate(dateKey) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+
+function formatBlogWeekday(dateKey) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  return date.toLocaleDateString("en-US", { weekday: "long" });
 }
 
 function createBlogSlides(parsed) {

@@ -90,6 +90,13 @@
           <button type="button" class="color-tool color-blue" data-blog-format="color" data-color="#2563eb" aria-label="Blue text"></button>
           <button type="button" class="color-tool color-green" data-blog-format="color" data-color="#16803c" aria-label="Green text"></button>
         </div>
+        <div class="blog-heading-fields">
+          <div>
+            <span id="blogDateLabel"></span>
+            <span id="blogWeekdayLabel"></span>
+          </div>
+          <input id="blogTitle" type="text" placeholder="Title" />
+        </div>
         <div id="blogEditor" class="blog-writing-surface" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="write blog"></div>
         <details class="blog-history">
           <summary>Past Blogs</summary>
@@ -97,6 +104,6 @@
         </details>
       </section>
     </main>
-    <script src="./app.js?v=20260527-blog-editing"></script>
+    <script src="./app.js?v=20260527-blog-title"></script>
   </body>
 </html>

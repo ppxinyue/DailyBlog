@@ -318,6 +318,47 @@ body {
   background: #16803c;
 }
 
+.blog-heading-fields {
+  background: rgb(255 255 255 / 0.62);
+  border: 1px solid rgb(255 255 255 / 0.9);
+  border-radius: 24px;
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+}
+
+.blog-heading-fields div {
+  align-items: center;
+  color: #7a608f;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 14px;
+  font-weight: 900;
+  gap: 10px;
+  letter-spacing: 0.02em;
+}
+
+.blog-heading-fields input {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(28px, 4vw, 54px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.08;
+  padding: 0;
+  width: 100%;
+}
+
+.blog-heading-fields input::placeholder {
+  color: #c2a9ca;
+}
+
+.blog-heading-fields input:focus {
+  outline: none;
+}
+
 .blog-writing-surface {
   background:
     radial-gradient(circle at 96% 8%, rgb(255 198 230 / 0.55) 0 42px, transparent 43px),

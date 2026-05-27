@@ -35,3 +35,4 @@
 24. Make Blog a large writing-first editor with live word statistics and no Todo modules inside the Blog view.
 25. Give Blog its own candy-particle UI style and add a collapsible past-blog list below the editor.
 26. Add basic Blog text editing controls plus separate draft stashing and saved-post persistence.
+27. Add automatic Blog date and weekday metadata plus a dedicated title field above the writing surface.
