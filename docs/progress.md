@@ -80,4 +80,5 @@
 - Reworked the Blog page into a blue-and-cream poster style inspired by the provided reference, replacing particle themes with brain and AI geometric graphics.
 - Removed text from the Blog poster hero and kept the top visual treatment to brain, AI chip, and orbit icons only.
 - Attempted to prepare a push to a remote repository named `DailyBlog`, but the environment has no configured remote, no GitHub CLI, and no reachable GitHub connection.
+- Lightened the Blog writing layout: expanded the editor width, reduced title/body font sizes and padding, moved export/stash/save controls below the writing area, and changed the AI chip to a robot icon without the orbit circle.
 - Updated the local static server to send no-cache headers and restarted `127.0.0.1:4174` so external browsers receive the latest files.

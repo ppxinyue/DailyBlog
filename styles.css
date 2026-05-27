@@ -192,9 +192,10 @@ body {
   display: grid;
   gap: 18px;
   margin: -8px auto 0;
-  max-width: 1180px;
-  padding: clamp(18px, 4vw, 58px);
+  max-width: 1280px;
+  padding: 6px;
   position: relative;
+  width: 100%;
 }
 
 .blog-view::before,
@@ -235,12 +236,13 @@ body {
   border-radius: 30px;
   box-shadow: 0 24px 60px rgb(54 84 145 / 0.18);
   display: grid;
-  gap: 22px;
+  gap: 12px;
   min-height: 72vh;
   margin: 0 auto;
-  max-width: 930px;
-  padding: clamp(28px, 5vw, 58px);
+  max-width: none;
+  padding: clamp(12px, 2vw, 24px);
   position: relative;
+  width: 100%;
   z-index: 1;
 }
 
@@ -248,7 +250,8 @@ body {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .blog-export-row button {
@@ -258,9 +261,9 @@ body {
   color: var(--panel);
   cursor: pointer;
   font: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
-  padding: 9px 14px;
+  padding: 7px 11px;
 }
 
 .blog-export-row button:disabled {
@@ -270,12 +273,12 @@ body {
 
 .blog-export-row span {
   color: #5f86df;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .blog-poster-hero {
-  min-height: 250px;
+  min-height: 118px;
   position: relative;
 }
 
@@ -291,56 +294,26 @@ body {
 }
 
 .blog-brain-graphic {
-  height: 220px;
-  left: 6%;
-  top: 12px;
-  width: 270px;
+  height: 118px;
+  left: 4%;
+  top: 0;
+  width: 150px;
 }
 
 .blog-ai-graphic {
   background: rgb(95 134 223 / 0.08);
-  border-radius: 22px;
-  height: 190px;
-  right: 6%;
-  top: 28px;
-  width: 190px;
-}
-
-.blog-orbit-graphic {
-  border: 3px solid #5f86df;
-  border-radius: 50%;
-  height: 96px;
-  position: absolute;
-  left: 47%;
-  top: 128px;
-  width: 96px;
-}
-
-.blog-orbit-graphic::before,
-.blog-orbit-graphic::after {
-  background: #5f86df;
-  border-radius: 50%;
-  content: "";
-  height: 13px;
-  position: absolute;
-  width: 13px;
-}
-
-.blog-orbit-graphic::before {
-  right: 2px;
-  top: 8px;
-}
-
-.blog-orbit-graphic::after {
-  bottom: 9px;
-  left: 6px;
+  border-radius: 18px;
+  height: 112px;
+  right: 4%;
+  top: 2px;
+  width: 112px;
 }
 
 .blog-toolbar {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .blog-toolbar button {
@@ -352,12 +325,12 @@ body {
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
-  height: 34px;
+  height: 28px;
   justify-content: center;
-  min-width: 38px;
-  padding: 0 12px;
+  min-width: 32px;
+  padding: 0 9px;
 }
 
 .blog-toolbar button:hover,
@@ -367,9 +340,9 @@ body {
 
 .blog-toolbar .color-tool {
   border: 3px solid #fff9ef;
-  min-width: 34px;
+  min-width: 28px;
   padding: 0;
-  width: 34px;
+  width: 28px;
 }
 
 .blog-toolbar .color-pink {
@@ -389,8 +362,8 @@ body {
   border: 1px solid #5f86df;
   border-radius: 16px;
   display: grid;
-  gap: 14px;
-  padding: 20px;
+  gap: 6px;
+  padding: 10px 12px;
 }
 
 .blog-heading-fields div {
@@ -398,7 +371,7 @@ body {
   color: #5f86df;
   display: flex;
   flex-wrap: wrap;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 900;
   gap: 10px;
   letter-spacing: 0.02em;
@@ -409,10 +382,10 @@ body {
   border: 0;
   color: #5f86df;
   font: inherit;
-  font-size: clamp(28px, 4vw, 54px);
+  font-size: 16px;
   font-weight: 900;
   letter-spacing: 0;
-  line-height: 1.08;
+  line-height: 1.2;
   padding: 0;
   width: 100%;
 }
@@ -432,12 +405,12 @@ body {
   color: var(--ink);
   flex: 1;
   font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
-  font-size: clamp(22px, 2.4vw, 32px);
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0;
-  line-height: 1.75;
-  min-height: 62vh;
-  padding: clamp(28px, 5vw, 72px);
+  line-height: 1.55;
+  min-height: 52vh;
+  padding: 12px;
   tab-size: 2;
 }
 
@@ -838,12 +811,12 @@ textarea:focus,
 
   .blog-editor {
     min-height: 72vh;
-    padding: 16px;
+    padding: 10px;
   }
 
   .blog-writing-surface {
-    min-height: 64vh;
-    padding: 22px;
+    min-height: 50vh;
+    padding: 10px;
   }
 
   .overview-card {
