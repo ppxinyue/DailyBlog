@@ -37,3 +37,5 @@
 26. Add basic Blog text editing controls plus separate draft stashing and saved-post persistence.
 27. Add automatic Blog date and weekday metadata plus a dedicated title field above the writing surface.
 28. Replace the static Blog candy background with animated particles and switchable art-inspired color themes.
+29. Restyle Blog as a blue-and-cream poster layout with brain and AI graphics.
+30. Remove text from the Blog poster hero so only brain and AI icons remain.

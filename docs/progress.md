@@ -77,4 +77,6 @@
 - Added a rich Blog editing surface with heading, bold, strikethrough, and font color controls, plus separate draft stash and saved-post actions.
 - Added automatic Blog date and weekday labels plus a separate title field that is included in draft, save, history, and PNG export flows.
 - Replaced the static Blog background with canvas-driven animated particles and switchable art-inspired palettes for Monet, Van Gogh, Hokusai, and Kandinsky.
+- Reworked the Blog page into a blue-and-cream poster style inspired by the provided reference, replacing particle themes with brain and AI geometric graphics.
+- Removed text from the Blog poster hero and kept the top visual treatment to brain, AI chip, and orbit icons only.
 - Updated the local static server to send no-cache headers and restarted `127.0.0.1:4174` so external browsers receive the latest files.

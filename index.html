@@ -70,8 +70,7 @@
       </section>
     </main>
 
-    <main id="blogView" class="blog-view app-view blog-theme-monet" aria-label="Blog" hidden>
-      <canvas id="blogParticleCanvas" class="blog-particle-canvas" aria-hidden="true"></canvas>
+    <main id="blogView" class="blog-view app-view" aria-label="Blog" hidden>
       <section class="blog-editor">
         <div class="blog-export-row">
           <button type="button" id="exportBlogPng">Export PNG</button>
@@ -81,11 +80,16 @@
           <span id="blogSaveStatus"></span>
           <span id="blogWordStats"></span>
         </div>
-        <div class="blog-theme-switcher" aria-label="Blog visual theme">
-          <button type="button" data-blog-theme="monet">Monet</button>
-          <button type="button" data-blog-theme="vangogh">Van Gogh</button>
-          <button type="button" data-blog-theme="hokusai">Hokusai</button>
-          <button type="button" data-blog-theme="kandinsky">Kandinsky</button>
+        <div class="blog-poster-hero" aria-hidden="true">
+          <svg class="blog-brain-graphic" viewBox="0 0 220 180" role="img">
+            <path d="M70 88c-18-3-29-16-28-35 2-23 24-39 45-31 8-15 31-19 46-7 13-8 34-3 43 12 14 3 24 16 23 31 0 15-10 28-24 33 1 17-12 32-29 34-10 22-43 24-57 5-18 4-37-9-39-28-12-2-21-12-22-24-1-15 9-27 24-30" />
+            <path d="M78 48c13 5 20 15 21 30m34-49c-10 12-10 25 0 38m-57 57c9-8 20-10 33-5m31-21c19-5 31 0 37 15m-87-37c14-4 27-1 38 9" />
+          </svg>
+          <svg class="blog-ai-graphic" viewBox="0 0 180 180" role="img">
+            <rect x="42" y="42" width="96" height="96" rx="18" />
+            <path d="M68 107l15-38h14l15 38m-36-13h28m25-25v38M26 68h16m-16 44h16m96-44h16m-16 44h16M68 26v16m44-16v16M68 138v16m44-16v16" />
+          </svg>
+          <div class="blog-orbit-graphic"></div>
         </div>
         <div class="blog-toolbar" aria-label="Blog text tools">
           <button type="button" data-blog-format="heading" data-level="1">H1</button>
@@ -111,6 +115,6 @@
         </details>
       </section>
     </main>
-    <script src="./app.js?v=20260527-blog-particles"></script>
+    <script src="./app.js?v=20260527-blog-poster"></script>
   </body>
 </html>
