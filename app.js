@@ -34,6 +34,7 @@ renderOverview();
 renderInsights();
 bindViewSwitch();
 bindBlogEditor();
+bindBlogExport();
 
 async function renderInsights() {
   const list = document.querySelector("#insightList");
@@ -390,6 +391,237 @@ function renderBlogArchive() {
     const title = parseBlogContent(content).title || "Untitled";
     return `<button type="button" data-blog-date="${dateKey}" class="${dateKey === currentBlogDate ? "is-active" : ""}"><span>${dateKey}</span>${escapeHtml(title)}</button>`;
   }).join("");
+}
+
+function bindBlogExport() {
+  document.querySelector("#exportBlogPng")?.addEventListener("click", exportBlogPngSeries);
+}
+
+async function exportBlogPngSeries() {
+  const button = document.querySelector("#exportBlogPng");
+  const status = document.querySelector("#exportBlogStatus");
+  const content = blogPosts[currentBlogDate] || document.querySelector("#blogEditor")?.value || "";
+  const parsed = parseBlogContent(content);
+  if (button) button.disabled = true;
+  if (status) status.textContent = "Rendering...";
+
+  try {
+    const slides = createBlogSlides(parsed);
+    for (let index = 0; index < slides.length; index += 1) {
+      const canvas = renderBlogSlide(slides[index], parsed, index + 1, slides.length);
+      await downloadCanvas(canvas, `blog-${currentBlogDate}-${String(index + 1).padStart(2, "0")}.png`);
+      await wait(140);
+    }
+    if (status) status.textContent = `${slides.length} PNG`;
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+function createBlogSlides(parsed) {
+  const width = 1080;
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  const maxWidth = width - 184;
+  const slides = [{ type: "cover" }];
+  const pages = [];
+  let page = [];
+  let y = 236;
+  const maxY = 1250;
+
+  const pushPage = () => {
+    if (!page.length) return;
+    pages.push(page);
+    page = [];
+    y = 236;
+  };
+
+  const addLine = (entry) => {
+    const nextY = y + entry.height;
+    if (nextY > maxY && page.length) pushPage();
+    page.push({ ...entry, y });
+    y += entry.height;
+  };
+
+  parsed.blocks.forEach((block) => {
+    if (block.type === "heading") {
+      context.font = "700 44px Inter, system-ui, sans-serif";
+      wrapCanvasText(context, block.text, maxWidth).forEach((line) => addLine({ type: "heading", text: line, height: 66 }));
+      y += 14;
+      return;
+    }
+    if (block.type === "quote") {
+      context.font = "700 38px Inter, system-ui, sans-serif";
+      wrapCanvasText(context, block.text, maxWidth - 36).forEach((line) => addLine({ type: "quote", text: line, height: 58 }));
+      y += 18;
+      return;
+    }
+    if (block.type === "list") {
+      context.font = "500 34px Inter, system-ui, sans-serif";
+      block.items.forEach((item) => {
+        wrapCanvasText(context, item, maxWidth - 42).forEach((line, lineIndex) => {
+          addLine({ type: "list", text: line, bullet: lineIndex === 0, height: 50 });
+        });
+        y += 8;
+      });
+      y += 8;
+      return;
+    }
+    context.font = "500 34px Inter, system-ui, sans-serif";
+    wrapCanvasText(context, block.text, maxWidth).forEach((line) => addLine({ type: "paragraph", text: line, height: 52 }));
+    y += 24;
+  });
+  pushPage();
+
+  return [...slides, ...pages.map((items) => ({ type: "content", items }))];
+}
+
+function renderBlogSlide(slide, parsed, pageNumber, totalPages) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1440;
+  const ctx = canvas.getContext("2d");
+  const title = parsed.title || "Untitled";
+
+  drawCanvasBackground(ctx);
+  ctx.fillStyle = "#1f1f1f";
+
+  if (slide.type === "cover") {
+    drawCanvasPill(ctx, 92, 92, currentBlogDate);
+    ctx.font = "800 78px Inter, system-ui, sans-serif";
+    wrapCanvasText(ctx, title, 820).slice(0, 5).forEach((line, index) => {
+      ctx.fillText(line, 92, 300 + index * 92);
+    });
+    if (parsed.tags.length) {
+      let tagX = 92;
+      const tagY = 820;
+      parsed.tags.slice(0, 5).forEach((tag) => {
+        ctx.font = "800 26px Inter, system-ui, sans-serif";
+        const tagWidth = ctx.measureText(tag).width + 42;
+        roundRect(ctx, tagX, tagY, tagWidth, 48, 24, "#f5f5f5", "#e6e6e6");
+        ctx.fillStyle = "#6f6f6f";
+        ctx.fillText(tag, tagX + 21, tagY + 32);
+        tagX += tagWidth + 14;
+      });
+    }
+    ctx.fillStyle = "#1f1f1f";
+    ctx.font = "700 34px Inter, system-ui, sans-serif";
+    ctx.fillText("Blog Notes", 92, 1190);
+    drawCanvasPage(ctx, pageNumber, totalPages);
+    return canvas;
+  }
+
+  ctx.font = "800 28px Inter, system-ui, sans-serif";
+  ctx.fillText(title, 92, 118);
+  ctx.fillStyle = "#6f6f6f";
+  ctx.font = "700 24px Inter, system-ui, sans-serif";
+  ctx.fillText(currentBlogDate, 92, 154);
+
+  slide.items.forEach((item) => {
+    if (item.type === "heading") {
+      ctx.fillStyle = "#1f1f1f";
+      ctx.font = "800 44px Inter, system-ui, sans-serif";
+      ctx.fillText(item.text, 92, item.y);
+    } else if (item.type === "quote") {
+      ctx.fillStyle = "#1f1f1f";
+      roundRect(ctx, 92, item.y - 40, 8, 48, 4, "#1f1f1f");
+      ctx.fillStyle = "#6f6f6f";
+      ctx.font = "700 38px Inter, system-ui, sans-serif";
+      ctx.fillText(item.text, 120, item.y);
+    } else if (item.type === "list") {
+      ctx.fillStyle = "#1f1f1f";
+      ctx.font = "500 34px Inter, system-ui, sans-serif";
+      if (item.bullet) ctx.fillText("•", 92, item.y);
+      ctx.fillText(item.text, 134, item.y);
+    } else {
+      ctx.fillStyle = "#1f1f1f";
+      ctx.font = "500 34px Inter, system-ui, sans-serif";
+      ctx.fillText(item.text, 92, item.y);
+    }
+  });
+  drawCanvasPage(ctx, pageNumber, totalPages);
+  return canvas;
+}
+
+function drawCanvasBackground(ctx) {
+  const gradient = ctx.createLinearGradient(0, 0, 1080, 1440);
+  gradient.addColorStop(0, "#ffffff");
+  gradient.addColorStop(1, "#f1f1f1");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 1080, 1440);
+  roundRect(ctx, 54, 54, 972, 1332, 42, "rgba(255,255,255,0.72)", "#e6e6e6");
+}
+
+function drawCanvasPill(ctx, x, y, text) {
+  ctx.font = "800 26px Inter, system-ui, sans-serif";
+  const width = ctx.measureText(text).width + 44;
+  roundRect(ctx, x, y, width, 52, 26, "#f5f5f5", "#e6e6e6");
+  ctx.fillStyle = "#6f6f6f";
+  ctx.fillText(text, x + 22, y + 35);
+}
+
+function drawCanvasPage(ctx, pageNumber, totalPages) {
+  ctx.fillStyle = "#6f6f6f";
+  ctx.font = "800 24px Inter, system-ui, sans-serif";
+  ctx.fillText(`${pageNumber}/${totalPages}`, 92, 1320);
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+  const lines = [];
+  let line = "";
+  for (const char of text) {
+    const testLine = line + char;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      lines.push(line);
+      line = char.trimStart();
+    } else {
+      line = testLine;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + width, y, x + width, y + height, radius);
+  ctx.arcTo(x + width, y + height, x, y + height, radius);
+  ctx.arcTo(x, y + height, x, y, radius);
+  ctx.arcTo(x, y, x + width, y, radius);
+  ctx.closePath();
+  if (fill) {
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
+function downloadCanvas(canvas, filename) {
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        resolve();
+        return;
+      }
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      window.setTimeout(() => {
+        URL.revokeObjectURL(link.href);
+        resolve();
+      }, 80);
+    }, "image/png");
+  });
+}
+
+function wait(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function escapeHtml(value) {

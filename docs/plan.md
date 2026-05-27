@@ -31,3 +31,4 @@
 20. Keep the calendar in the left half of the overview and show lightweight statistic charts on the right.
 21. Add Insight history, saved-item view, and a More interaction with loading state and expanded result rendering.
 22. Add a top-level Todo/Blog switch; keep existing work as Todo and provide a separate auto-formatted Blog page.
+23. Support exporting the current Blog as a series of polished 1080x1440 PNG images for Xiaohongshu/Rednote.
